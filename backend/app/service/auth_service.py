@@ -67,9 +67,12 @@ class AuthService:
             forgot_password.email, pwd_context.hash(forgot_password.new_password)
         )
 
+
 """
 Generate the status transactions
 """
+
+
 async def generate_status_transactions():
     _status = await StatusTransactionsReposity.find_status_transations([101, 202, 303])
     if not _status:
