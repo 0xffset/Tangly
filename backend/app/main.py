@@ -2,7 +2,7 @@ import uvicorn
 from fastapi import FastAPI, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import db
-
+from app.service.auth_service import generate_status_transactions
 
 origins = ["http://localhost:3000"]
 
@@ -21,6 +21,7 @@ def init_app():
     @app.on_event("startup")
     async def startup():
         await db.create_all()
+        await generate_status_transactions()
 
     @app.on_event("shutdown")
     async def shutdown():

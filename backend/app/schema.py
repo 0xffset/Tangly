@@ -23,7 +23,7 @@ class RegisterSchema(BaseModel):
     def email_validation(cls, v):
         logger.debug(f"email in 2 validatior: {v}")
 
-        # regex phone number
+        # regex email
         regex = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
         if v and not re.search(regex, v, re.I):
             raise HTTPException(status_code=400, detail="Correo invalido.")

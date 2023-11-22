@@ -5,8 +5,9 @@ from fastapi import HTTPException
 import requests
 from passlib.context import CryptContext
 from app.schema import RegisterSchema
-from app.model import Users
+from app.model import Users, StatusTransactions
 from app.repository.users import UsersRepository
+from app.repository.status_transactions_repository import StatusTransactionsReposity
 from app.schema import LoginSchema, ForgotPasswordSchema
 from app.repository.auth_repository import JWTRepo
 
@@ -64,4 +65,24 @@ class AuthService:
             raise HTTPException(status_code=404, detail="El correo no fue encontrado!")
         await UsersRepository.update_password(
             forgot_password.email, pwd_context.hash(forgot_password.new_password)
+        )
+
+"""
+Generate the status transactions
+"""
+async def generate_status_transactions():
+    _status = await StatusTransactionsReposity.find_status_transations([101, 202, 303])
+    if not _status:
+        await StatusTransactionsReposity.create_list(
+            [
+                StatusTransactions(
+                    id=str(1), status_code=101, status_message="Aceptada"
+                ),
+                StatusTransactions(
+                    id=str(2), status_code=202, status_message="En proceso"
+                ),
+                StatusTransactions(
+                    id=str(3), status_code=303, status_message="Rechazada"
+                ),
+            ]
         )
