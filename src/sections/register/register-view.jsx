@@ -15,7 +15,7 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { bgGradient } from 'src/theme/css';
 import { useRouter } from 'src/routes/hooks';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 
 // ----------------------------------------------------------------------
 
@@ -26,51 +26,40 @@ export default function RegisterView() {
 
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordRepeated, setShowPasswordRepeated] = useState(false);
-
+  const initialValidationState = [true, ''];
+  
   const handleClick = () => {
     router.push('/register');
   };
-
-  const [isValidFirstName, setIsValidFirstName] = useState([true, '']);
-  const [isValidPassword, setIsValidPassword] = useState([true, '']);
-  const [isValidRepeatPassword, setValidRepeatPassword] = useState([true, '']);
-  const [isValidEmail, setIsValidEmail] = useState([true, '']);
+  const [isValidFirstName, setIsValidFirstName] = useState(initialValidationState);
+  const [isValidRepeatPassword, setValidRepeatPassword] = useState(initialValidationState);
+  const [isValidEmail, setIsValidEmail] = useState(initialValidationState);
 
   const [message, setMessage] = useState("");
-  const [progress, setProgress] = useState("");
 
-  const [firstName, setFirstName] = useState('')
-  const [LastName, setLastName] = useState('')
-  const [Email, setEmail] = useState('')
-  const [Password, setPassword] = useState('')
-  const [RepeatPassword, setRepeatPassword] = useState('')
+  const [formValues, setFormValues] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    repeatPassword: "",
+  });
 
-  const checkEmail = (email) => {
-    return /\S+@\S+\.\S+/.test(email);
-  }
+  const checkEmail = (email) => /\S+@\S+\.\S+/.test(email);
+
+  const handleRepeatPassword = useCallback((passwordValue) => {
+    const isValid = passwordValue.trim().length > 0 && passwordValue.trim() === formValues.password.trim();
+    setValidRepeatPassword([isValid, isValid ? 'Contraseñas coinciden.' : 'Contraseñas no coinciden.']);
+    //  setFormValues((prev) => ({ ...prev, repeatPassword: passwordValue }));
+  }, [formValues.password]);
 
 
-  const handleRepeatPassword = (passwordValue) => {
-    if (passwordValue.trim().length > 0 && passwordValue.trim() == Password.trim()) {
-      setValidRepeatPassword([true, 'Constrasenas coincieden.'])
+  const updateRepeatStatusPassword = useCallback((passwordValue) => {
+    const isValid = passwordValue.trim().length > 0 && formValues.repeatPassword.trim() === passwordValue.trim();
+    setValidRepeatPassword([isValid, isValid ? 'Contraseñas coinciden.' : 'Contraseñas no coinciden.']);
+  }, [formValues.repeatPassword]);
 
-    }
-    else {
-      setValidRepeatPassword([false, 'Constrasenas no coincieden.'])
-    }
-    setRepeatPassword(passwordValue)
-  }
-
-  const updateRepeatStatusPassword = (passwordValue) => {
-    if (passwordValue.trim().length > 0 && RepeatPassword.trim() === passwordValue.trim()) {
-      setValidRepeatPassword([true, 'Constrasenas coincieden.'])
-    }
-    else {
-      setValidRepeatPassword([false, 'Constrasenas no coincieden.'])
-    }
-  }
-
-  const handlePassword = (passwordValue) => {
+  const handlePassword = useCallback((passwordValue) => {
     const strengthChecks = {
       length: 0,
       hasUpperCase: false,
@@ -79,29 +68,31 @@ export default function RegisterView() {
       hasSpecialChar: false,
     };
 
-    strengthChecks.length = passwordValue.length >= 8 ? true : false;
+    strengthChecks.length = passwordValue.length >= 8;
     strengthChecks.hasUpperCase = /[A-Z]+/.test(passwordValue);
     strengthChecks.hasLowerCase = /[a-z]+/.test(passwordValue);
     strengthChecks.hasDigit = /[0-9]+/.test(passwordValue);
     strengthChecks.hasSpecialChar = /[^A-Za-z0-9]+/.test(passwordValue);
 
-    let verifiedList = Object.values(strengthChecks).filter((value) => value);
+    const verifiedList = Object.values(strengthChecks).filter((value) => value);
 
-    let strength =
-      verifiedList.length == 5
-        ? "Strong"
-        : verifiedList.length >= 2
-          ? "Medium"
-          : "Weak";
 
-    setPassword(passwordValue);
-    setProgress(`${(verifiedList.length / 5) * 100}%`);
+    let strength = "";
+    if (verifiedList.length === 5) {
+      strength = "La constraseña es fuerte.";
+    } else if (verifiedList.length >= 2) {
+      strength = "La constraseña es regular."
+    }
+    else {
+      strength = 'La constraseña es débil.';
+    }
+
     setMessage(strength);
 
     // Actualizar estado de la repetida
-    updateRepeatStatusPassword(passwordValue)
+    updateRepeatStatusPassword(passwordValue);
 
-  }
+  }, [updateRepeatStatusPassword]);
 
 
 
@@ -114,56 +105,64 @@ export default function RegisterView() {
 
   const submitRegister = () => {
     // Validate FirstName
-    if (firstName.trim() == '') {
-      setIsValidFirstName([false, 'El nombre no puede estar vacio.'])
-      console.log(isValidFirstName)
-    } else if (firstName.trim().length < 6) {
-      setIsValidFirstName([false, 'El nombre debe ser mayor a 6.'])
+    if (formValues.firstName.trim() === '') {
+      setIsValidFirstName([false, 'El nombre no puede estar vacío.']);
+    } else if (formValues.firstName.trim().length < 6) {
+      setIsValidFirstName([false, 'El nombre debe tener al menos 6 caracteres.']);
+    } else {
+      setIsValidFirstName(initialValidationState);
     }
-    else {
-      setIsValidFirstName([true, ''])
-    }
+
     // Validate Email
-    if (Email.trim() == '') {
-      setIsValidEmail([false, 'El correo no puede estar vacio'])
+    if (formValues.email.trim() === '') {
+      setIsValidEmail([false, 'El correo no puede estar vacío']);
+    } else if (!checkEmail(formValues.email.trim())) {
+      setIsValidEmail([false, 'El correo no es válido']);
+    } else {
+      setIsValidEmail(initialValidationState);
     }
-    else if (!checkEmail(Email.trim())) {
-      setIsValidEmail([false, 'El correo no es valido'])
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    if (name === 'repeatPassword') {
+      handleRepeatPassword(value);
     }
-    else {
-      setIsValidEmail([true, ''])
+    if (name === 'password') {
+      handlePassword(value);
     }
-
-  }
-
-
-
+    setFormValues((prevFormValues) => ({
+      ...prevFormValues,
+      [name]: value,
+    }));
+  };
 
   const renderForm = (
     <>
       <Stack spacing={3}>
         <TextField
-          onChange={(e) => setFirstName(e.target.value)}
+          onChange={handleInputChange}
           required
-          name="first_name"
+          name="firstName"
           label="Nombre"
-          value={firstName}
+          value={formValues.firstName}
           helperText={isValidFirstName[1]}
           error={!isValidFirstName[0]}
         />
-        <TextField name="last_name" label="Apellido" />
+        <TextField name="lastName"
+          value={formValues.lastName}
+          onChange={handleInputChange}
+          label="Apellido" />
         <TextField required
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={handleInputChange}
           error={!isValidEmail[0]}
           helperText={isValidEmail[1]}
-          value={Email}
+          value={formValues.email}
           name="email" label="Email" />
-        <TextField required focused={Password.trim().length > 0}
+        <TextField required focused={formValues.password.trim().length > 0}
           name="password"
-          value={Password}
-          onChange={({ target }) => {
-            handlePassword(target.value)
-          }}
+          value={formValues.password}
+          onChange={handleInputChange}
           label="Contraseña"
           type={showPassword ? 'text' : 'password'}
           helperText={message}
@@ -179,13 +178,11 @@ export default function RegisterView() {
           }}
         />
 
-        <TextField required
-          name="repeat_password"
+        <TextField required focused={formValues.repeatPassword.trim().length > 0}
+          name="repeatPassword"
           label="Repetir contraseña"
-          value={RepeatPassword}
-          onChange={({ target }) => {
-            handleRepeatPassword(target.value)
-          }}
+          value={formValues.repeatPassword}
+          onChange={handleInputChange}
           helperText={isValidRepeatPassword[1]}
           color={isValidRepeatPassword[0] ? 'success' : 'error'}
           type={showPasswordRepeated ? 'text' : 'password'}
@@ -201,9 +198,7 @@ export default function RegisterView() {
         />
       </Stack>
 
-      <Stack direction="row" alignItems="center" justifyContent="flex-end" sx={{ my: 3 }}>
-
-      </Stack>
+      <Stack direction="row" alignItems="center" justifyContent="flex-end" sx={{ my: 3 }} />
 
       <LoadingButton
         fullWidth
