@@ -41,7 +41,6 @@ export default function RegisterView() {
       password: formValues.password
     })
       .then((res) => {
-
         if (res.status === 200) {
           window.location = "/login";
         }
