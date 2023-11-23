@@ -1,9 +1,10 @@
+/* eslint-disable no-plusplus */
+import p5 from 'p5';
 import React, { useEffect } from 'react';
 
-import p5 from 'p5';
-
 const GraphSimulation3D = () => {
-    let nodes = [];
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const nodes = [];
 
     useEffect(() => {
         const sketch = (p) => {
@@ -55,6 +56,7 @@ const GraphSimulation3D = () => {
             };
         };
 
+        // eslint-disable-next-line new-cap
         const sketchInstance = new p5(sketch);
 
         return () => {
@@ -62,7 +64,7 @@ const GraphSimulation3D = () => {
         };
     }, [nodes]);
 
-    return <div id="graph-container"></div>
+    return <div id="graph-container" />
 };
 
 export default GraphSimulation3D;

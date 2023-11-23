@@ -42,7 +42,7 @@ class AuthService:
         # Cheking the same email
         _email = await UsersRepository.find_by_email(register.email)
         if _email:
-            raise HTTPException(status_code=400, detail="El correo ya existe!")
+            raise HTTPException(status_code=400, detail="Email already taken")
 
         else:
             #  insert to tables
@@ -54,15 +54,15 @@ class AuthService:
 
         if _user is not None:
             if not pwd_context.verify(login.password, _user.password):
-                raise HTTPException(status_code=400, detail="Constrasena invalida!")
+                raise HTTPException(status_code=400, detail="Invalid password")
             return JWTRepo(data={"email": _user.email}).generate_token()
-        raise HTTPException(status_code=404, detail="El usuario no fue contrado!")
+        raise HTTPException(status_code=404, detail="User not found")
 
     @staticmethod
     async def forgot_password_service(forgot_password: ForgotPasswordSchema):
         _email = await UsersRepository.find_by_email(forgot_password.email)
         if _email is None:
-            raise HTTPException(status_code=404, detail="El correo no fue encontrado!")
+            raise HTTPException(status_code=404, detail="Email not found")
         await UsersRepository.update_password(
             forgot_password.email, pwd_context.hash(forgot_password.new_password)
         )

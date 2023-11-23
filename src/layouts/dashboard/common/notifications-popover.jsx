@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { set, sub } from 'date-fns';
 import { faker } from '@faker-js/faker';
 
-import Box from '@mui/material/Box';
+import {Box } from '@mui/material';
 import List from '@mui/material/List';
 import Badge from '@mui/material/Badge';
 import Button from '@mui/material/Button';

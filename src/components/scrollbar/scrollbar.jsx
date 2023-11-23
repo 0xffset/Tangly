@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { memo, forwardRef } from 'react';
 
-import Box from '@mui/material/Box';
+import {Box } from '@mui/material';
 
 import { StyledScrollbar, StyledRootScrollbar } from './styles';
 

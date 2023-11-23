@@ -1,16 +1,17 @@
-import { HEADER, NAV } from '../../layouts/dashboard/config-layout';
 
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import { Button } from '@mui/material';
-import IconButton from '@mui/material/IconButton';
-import Iconify from 'src/components/iconify';
 import PropTypes from 'prop-types';
+
 import Stack from '@mui/material/Stack';
+import AppBar from '@mui/material/AppBar';
+import {Box, Button}  from '@mui/material';
 import Toolbar from '@mui/material/Toolbar';
-import { bgBlur } from 'src/theme/css';
-import { useResponsive } from 'src/hooks/use-responsive';
 import { useTheme } from '@mui/material/styles';
+
+import { useResponsive } from 'src/hooks/use-responsive';
+
+import { bgBlur } from 'src/theme/css';
+
+import { NAV, HEADER } from '../../layouts/dashboard/config-layout';
 
 // ----------------------------------------------------------------------
 
@@ -22,7 +23,7 @@ export default function HeaderHome({ onOpenNav }) {
     const renderContent = (
         <>
            
-            <Box sx={{ flexGrow: 1 }} />
+            <Box sx={{ flexGrow: 1 }}  />
 
             <Stack direction="row" alignItems="center" spacing={1}>
                 <Button href='/login' style={{ textTransform: 'none', color: 'black', variant: 'raised', backgroundColor: 'transparent' }}>Iniciar</Button>

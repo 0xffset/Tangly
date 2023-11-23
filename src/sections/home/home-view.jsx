@@ -1,16 +1,15 @@
 import * as React from 'react';
+import NET from 'vanta/src/vanta.net';
 
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-
-import Box from '@mui/material/Box';
-import { Button } from '@mui/material';
+import Link from '@mui/material/Link';
+import { Box, Button } from '@mui/material';
 import Container from '@mui/material/Container';
+import Typography from '@mui/material/Typography';
 import CssBaseline from '@mui/material/CssBaseline';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+
 import GraphSimulation from './dag';
 import HeaderHome from './header_home';
-import Link from '@mui/material/Link';
-import NET from 'vanta/src/vanta.net';
-import Typography from '@mui/material/Typography';
 
 function Copyright() {
     return (
@@ -20,7 +19,7 @@ function Copyright() {
                 Tangly
             </Link>{' '}
             {new Date().getFullYear()}
-            {'.'}
+            .
         </Typography>
     );
 }
@@ -51,7 +50,7 @@ export default function HomeView() {
     }
     return (
         <ThemeProvider theme={defaultTheme}>
-            <HeaderHome onOpenNav={() => setOpenNav(true)} />
+            <HeaderHome  />
             <Box
                 sx={{
                     paddingTop: '10px',
@@ -98,7 +97,7 @@ export default function HomeView() {
                            Tangle.
                         </Typography>
                         <Typography style={{ fontSize: '1.25rem', lineHeight: '1.6', color: '#333', margin: '1.5rem 0' }} variant="h5" color="text.secondary" component="p">
-                            En el contexto de la red Tangle, que es la tecnología subyacente a IOTA (una criptomoneda diseñada para la Internet de las cosas), los "peers" se refieren a los nodos individuales que participan en la red. Cada nodo en la red Tangle es un "par" (peer) que puede enviar, recibir y validar transacciones.
+                            En el contexto de la red Tangle, que es la tecnología subyacente a IOTA (una criptomoneda diseñada para la Internet de las cosas), los peers se refieren a los nodos individuales que participan en la red. Cada nodo en la red Tangle es un par (peer) que puede enviar, recibir y validar transacciones.
                             A diferencia de algunas otras criptomonedas basadas en cadenas de bloques, en la red Tangle, no hay bloques ni mineros.
                         </Typography>
                         <Box sx={{ m: 2 }} />

@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.config import db
 from app.service.auth_service import generate_status_transactions
 
-origins = ["http://localhost:3000"]
+origins = ["http://localhost:3030"]
 
 
 def init_app():
@@ -40,4 +40,4 @@ app = init_app()
 
 def start():
     """Launched with 'poetry run start' at root level"""
-    uvicorn.run("app.main:app", host="localhost", port=4444, reload=True)
+    uvicorn.run("app.main:app", host="localhost", port=3694, reload=True)

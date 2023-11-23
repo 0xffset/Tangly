@@ -14,7 +14,7 @@ class StatusTransactionsReposity(BaseRepository):
         query = select(StatusTransactions).where(
             StatusTransactions.status_code.in_(status_transaction)
         )
-        return (await db.execute(query)).scalar_one_or_none()
+        return (await db.execute(query)).scalars().all()
 
     @staticmethod
     async def create_list(status_transations: List[StatusTransactions]):

@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 
-import Box from '@mui/material/Box';
+import {Box } from '@mui/material';
 
 import { useResponsive } from 'src/hooks/use-responsive';
 

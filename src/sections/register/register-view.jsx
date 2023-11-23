@@ -1,48 +1,71 @@
-import { alpha, useTheme } from '@mui/material/styles';
-
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Card from '@mui/material/Card';
-import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
-import Iconify from 'src/components/iconify';
-import InputAdornment from '@mui/material/InputAdornment';
-import Link from '@mui/material/Link';
-import LoadingButton from '@mui/lab/LoadingButton';
-import Logo from 'src/components/logo';
-import Stack from '@mui/material/Stack';
-import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
-import { bgGradient } from 'src/theme/css';
-import { useRouter } from 'src/routes/hooks';
+import axios from 'axios';
+import { Navigate } from "react-router-dom";
 import { useState, useCallback } from 'react';
+
+import { Box } from '@mui/material';
+import Card from '@mui/material/Card';
+import Link from '@mui/material/Link';
+import Alert from '@mui/material/Alert';
+import Stack from '@mui/material/Stack';
+import Collapse from '@mui/material/Collapse';
+import TextField from '@mui/material/TextField';
+import CloseIcon from '@mui/icons-material/Close';
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
+import LoadingButton from '@mui/lab/LoadingButton';
+import { alpha, useTheme } from '@mui/material/styles';
+import InputAdornment from '@mui/material/InputAdornment';
+
+import { bgGradient } from 'src/theme/css';
+
+import Logo from 'src/components/logo';
+import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
 export default function RegisterView() {
   const theme = useTheme();
 
-  const router = useRouter();
 
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordRepeated, setShowPasswordRepeated] = useState(false);
   const initialValidationState = [true, ''];
-  
-  const handleClick = () => {
-    router.push('/register');
+
+  const handleClick = async () => {
+
+
+    await axios.post('http://localhost:3694/auth/register', {
+      email: formValues.email,
+      first_name: formValues.first_name,
+      last_name: formValues.last_name,
+      password: formValues.password
+    })
+      .then((res) => {
+
+        if (res.status === 200) {
+          window.location = "/login";
+        }
+      })
+      .catch((res) => {
+        setAlertMessage(res.response.data.detail)
+        setOpenAlert(true);
+      })
+
   };
   const [isValidFirstName, setIsValidFirstName] = useState(initialValidationState);
   const [isValidRepeatPassword, setValidRepeatPassword] = useState(initialValidationState);
   const [isValidEmail, setIsValidEmail] = useState(initialValidationState);
 
   const [message, setMessage] = useState("");
+  const [openAlert, setOpenAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
 
   const [formValues, setFormValues] = useState({
-    firstName: "",
-    lastName: "",
+    first_name: "",
+    last_name: "",
     email: "",
     password: "",
-    repeatPassword: "",
+    repeat_password: "",
   });
 
   const checkEmail = (email) => /\S+@\S+\.\S+/.test(email);
@@ -55,9 +78,9 @@ export default function RegisterView() {
 
 
   const updateRepeatStatusPassword = useCallback((passwordValue) => {
-    const isValid = passwordValue.trim().length > 0 && formValues.repeatPassword.trim() === passwordValue.trim();
+    const isValid = passwordValue.trim().length > 0 && formValues.repeat_password.trim() === passwordValue.trim();
     setValidRepeatPassword([isValid, isValid ? 'Contraseñas coinciden.' : 'Contraseñas no coinciden.']);
-  }, [formValues.repeatPassword]);
+  }, [formValues.repeat_password]);
 
   const handlePassword = useCallback((passwordValue) => {
     const strengthChecks = {
@@ -79,12 +102,12 @@ export default function RegisterView() {
 
     let strength = "";
     if (verifiedList.length === 5) {
-      strength = "La constraseña es fuerte.";
+      strength = "Strong";
     } else if (verifiedList.length >= 2) {
-      strength = "La constraseña es regular."
+      strength = "Medium"
     }
     else {
-      strength = 'La constraseña es débil.';
+      strength = 'Weak';
     }
 
     setMessage(strength);
@@ -103,11 +126,11 @@ export default function RegisterView() {
   };
 
 
-  const submitRegister = () => {
+  const submitRegister = async () => {
     // Validate FirstName
-    if (formValues.firstName.trim() === '') {
+    if (formValues.first_name.trim() === '') {
       setIsValidFirstName([false, 'El nombre no puede estar vacío.']);
-    } else if (formValues.firstName.trim().length < 6) {
+    } else if (formValues.first_name.trim().length < 6) {
       setIsValidFirstName([false, 'El nombre debe tener al menos 6 caracteres.']);
     } else {
       setIsValidFirstName(initialValidationState);
@@ -121,11 +144,14 @@ export default function RegisterView() {
     } else {
       setIsValidEmail(initialValidationState);
     }
+    if (isValidEmail[0] && isValidFirstName[0] && isValidRepeatPassword[0]) {
+      await handleClick();
+    }
   };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    if (name === 'repeatPassword') {
+    if (name === 'repeat_password') {
       handleRepeatPassword(value);
     }
     if (name === 'password') {
@@ -143,14 +169,14 @@ export default function RegisterView() {
         <TextField
           onChange={handleInputChange}
           required
-          name="firstName"
+          name="first_name"
           label="Nombre"
-          value={formValues.firstName}
+          value={formValues.first_name}
           helperText={isValidFirstName[1]}
           error={!isValidFirstName[0]}
         />
-        <TextField name="lastName"
-          value={formValues.lastName}
+        <TextField name="last_name"
+          value={formValues.last_name}
           onChange={handleInputChange}
           label="Apellido" />
         <TextField required
@@ -178,10 +204,10 @@ export default function RegisterView() {
           }}
         />
 
-        <TextField required focused={formValues.repeatPassword.trim().length > 0}
-          name="repeatPassword"
+        <TextField required focused={formValues.repeat_password.trim().length > 0}
+          name="repeat_password"
           label="Repetir contraseña"
-          value={formValues.repeatPassword}
+          value={formValues.repeat_password}
           onChange={handleInputChange}
           helperText={isValidRepeatPassword[1]}
           color={isValidRepeatPassword[0] ? 'success' : 'error'}
@@ -199,6 +225,28 @@ export default function RegisterView() {
       </Stack>
 
       <Stack direction="row" alignItems="center" justifyContent="flex-end" sx={{ my: 3 }} />
+      <Box sx={{ width: '100%' }}>
+        <Collapse in={openAlert}>
+          <Alert
+            severity="error"
+            action={
+              <IconButton
+                aria-label="close"
+                color="inherit"
+                size="small"
+                onClick={() => {
+                  setOpenAlert(false);
+                }}
+              >
+                <CloseIcon fontSize="inherit" />
+              </IconButton>
+            }
+            sx={{ mb: 2 }}
+          >
+            {alertMessage}
+          </Alert>
+        </Collapse>
+      </Box>
 
       <LoadingButton
         fullWidth
@@ -208,7 +256,7 @@ export default function RegisterView() {
         color="inherit"
         onClick={submitRegister}
       >
-        Registrarse
+        Register
       </LoadingButton>
     </>
   );
