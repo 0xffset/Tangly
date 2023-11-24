@@ -15,3 +15,14 @@ async def get_user_profile(
     token = JWTRepo.extract_token(credentials)
     result = await UserService.get_user_profile(token["email"])
     return ResponseSchema(detail="success", result=result)
+
+
+@router.get(
+    "/all", response_model=ResponseSchema, response_model_exclude_none=True
+)
+async def get_all_users(
+    credentials: HTTPAuthorizationCredentials = Security(JWTBearer()),
+):
+    token = JWTRepo.extract_token(credentials)
+    result = await UserService.get_all_users(token["id"])
+    return ResponseSchema(detail="success", result=result)

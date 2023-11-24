@@ -1,5 +1,6 @@
-import { useEffect } from 'react';
+import axios from 'axios';
 import PropTypes from 'prop-types';
+import { useState, useEffect } from 'react';
 
 import {Box } from '@mui/material';
 import Stack from '@mui/material/Stack';
@@ -27,6 +28,7 @@ import navConfig from './config-navigation';
 
 export default function Nav({ openNav, onCloseNav }) {
   const pathname = usePathname();
+  const [user, setUser] = useState({});
 
   const upLg = useResponsive('up', 'lg');
 
@@ -34,6 +36,20 @@ export default function Nav({ openNav, onCloseNav }) {
     if (openNav) {
       onCloseNav();
     }
+    const auth_token = localStorage.getItem("auth_token");
+    const auth_token_type = localStorage.getItem("auth_token_type");
+    const token = `${auth_token_type} ${auth_token}`;
+
+    axios.get("http://localhost:8080/users/", {
+      headers: { Authorization: token },
+    })
+      .then((response) => {
+        setUser(response.data.result);
+      })
+      .catch((error) => {
+        console.log(error);
+      }, [])
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 
@@ -50,10 +66,10 @@ export default function Nav({ openNav, onCloseNav }) {
         bgcolor: (theme) => alpha(theme.palette.grey[500], 0.12),
       }}
     >
-      <Avatar src={account.photoURL} alt="photoURL" />
+      <Avatar src={user.image} alt={user.first_name} />
 
       <Box sx={{ ml: 2 }}>
-        <Typography variant="subtitle2">{account.displayName}</Typography>
+        <Typography variant="subtitle2">{user.first_name}</Typography>
 
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
           {account.role}
@@ -75,25 +91,25 @@ export default function Nav({ openNav, onCloseNav }) {
       <Stack alignItems="center" spacing={3} sx={{ pt: 5, borderRadius: 2, position: 'relative' }}>
         <Box
           component="img"
-          src="/assets/illustrations/illustration_avatar.png"
+          src="/assets/illustrations/logo-PAID.png"
           sx={{ width: 100, position: 'absolute', top: -50 }}
         />
 
         <Box sx={{ textAlign: 'center' }}>
-          <Typography variant="h6">Get more?</Typography>
+          <Typography variant="h6">Tangly</Typography>
 
           <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1 }}>
-            From only $69
+          PoC Tangle Networking
           </Typography>
         </Box>
 
         <Button
-          href="https://material-ui.com/store/items/minimal-dashboard/"
+          href="https://github.com/0xffset/Tangly"
           target="_blank"
           variant="contained"
           color="inherit"
         >
-          Upgrade to Pro
+          Go to GitHub
         </Button>
       </Stack>
     </Box>

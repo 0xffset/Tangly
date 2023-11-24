@@ -40,4 +40,4 @@ app = init_app()
 
 def start():
     """Launched with 'poetry run start' at root level"""
-    uvicorn.run("app.main:app", host="localhost", port=3694, reload=True)
+    uvicorn.run("app.main:app", host="localhost", port=8080, reload=True)

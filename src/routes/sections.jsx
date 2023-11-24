@@ -3,6 +3,9 @@ import { Outlet, Navigate, useRoutes } from 'react-router-dom';
 
 import DashboardLayout from 'src/layouts/dashboard';
 
+import PrivateRouter from 'src/sections/privateRouter/privateRouter';
+import PrivateRouterLoginRegister from 'src/sections/privateRouter/PrivateRouterLoginRegister';
+
 export const IndexPage = lazy(() => import('src/pages/app'));
 export const BlogPage = lazy(() => import('src/pages/blog'));
 export const UserPage = lazy(() => import('src/pages/user'));
@@ -25,23 +28,28 @@ export default function Router() {
         </DashboardLayout>
       ),
       children: [
-        { element: <IndexPage />, index: true },
-        { path: 'user', element: <UserPage /> },
-        { path: 'products', element: <ProductsPage /> },
-        { path: 'blog', element: <BlogPage /> },
+        {
+          element:
+            <PrivateRouter children={<IndexPage />} />
+          , index: true
+        },
+        { path: 'user', element: <PrivateRouter children={<UserPage />} /> },
+        { path: 'products', element: <PrivateRouter children={<ProductsPage />} /> },
+        { path: 'blog', element: <PrivateRouter children={<BlogPage />} /> },
       ],
     },
     {
       path: 'register',
-      element: <RegisterPage/>
+      element: <PrivateRouterLoginRegister children={<RegisterPage />} />
     },
     {
-    path: 'home',
-    element: <HomePage/>,
+      path: 'home',
+      element: <HomePage />,
     },
     {
       path: 'login',
-      element: <LoginPage />,
+      element: <PrivateRouterLoginRegister children={<LoginPage />} />
+
     },
     {
       path: '404',

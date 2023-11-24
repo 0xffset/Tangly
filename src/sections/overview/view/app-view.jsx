@@ -1,8 +1,10 @@
+import axios from 'axios';
 import { faker } from '@faker-js/faker';
+import { useState, useEffect } from 'react';
 
 import Container from '@mui/material/Container';
-import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
+import Grid from '@mui/material/Unstable_Grid2/Grid2';
 
 import Iconify from 'src/components/iconify';
 
@@ -18,17 +20,40 @@ import AppConversionRates from '../app-conversion-rates';
 
 // ----------------------------------------------------------------------
 
+
+
+
 export default function AppView() {
+
+  const [user, setUser] = useState({});
+
+  useEffect(() => {
+    const auth_token = localStorage.getItem("auth_token");
+    const auth_token_type = localStorage.getItem("auth_token_type");
+    const token = `${auth_token_type} ${auth_token}`;
+    axios.get("http://localhost:8080/users/", {
+      headers: { Authorization: token },
+    })
+      .then((response) => {
+        console.log(response)
+        setUser(response.data.result);
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+  }, []);
+
+
   return (
     <Container maxWidth="xl">
       <Typography variant="h4" sx={{ mb: 5 }}>
-        Hi, Welcome back 👋
+        Hi, Welcome back {`${user.first_name} ${user.last_name}`} 👋
       </Typography>
 
       <Grid container spacing={3}>
         <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
-            title="Weekly Sales"
+            title="Transations Sended"
             total={714000}
             color="success"
             icon={<img alt="icon" src="/assets/icons/glass/ic_glass_bag.png" />}
@@ -37,7 +62,7 @@ export default function AppView() {
 
         <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
-            title="New Users"
+            title="Transactions Received"
             total={1352831}
             color="info"
             icon={<img alt="icon" src="/assets/icons/glass/ic_glass_users.png" />}
@@ -46,7 +71,7 @@ export default function AppView() {
 
         <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
-            title="Item Orders"
+            title="Total Transactions"
             total={1723315}
             color="warning"
             icon={<img alt="icon" src="/assets/icons/glass/ic_glass_buy.png" />}
@@ -55,7 +80,7 @@ export default function AppView() {
 
         <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
-            title="Bug Reports"
+            title="Networkign Status"
             total={234}
             color="error"
             icon={<img alt="icon" src="/assets/icons/glass/ic_glass_message.png" />}

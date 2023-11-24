@@ -1,19 +1,17 @@
-import { useState } from 'react';
+import axios from 'axios';
+import { useState, useEffect } from 'react';
 
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Table from '@mui/material/Table';
-import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import TableBody from '@mui/material/TableBody';
 import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
 
-import { users } from 'src/_mock/user';
-
-import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
+import HorizontalLinearStepper from 'src/components/strapper/strapper';
 
 import TableNoData from '../table-no-data';
 import UserTableRow from '../user-table-row';
@@ -36,7 +34,8 @@ export default function UserPage() {
   const [filterName, setFilterName] = useState('');
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
-
+  const [userData, setUserData] = useState([]);
+  const [isValidStep2, SetIsValidStep2] = useState(false);
   const handleSort = (event, id) => {
     const isAsc = orderBy === id && order === 'asc';
     if (id !== '') {
@@ -47,14 +46,19 @@ export default function UserPage() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = users.map((n) => n.name);
+      const newSelecteds = userData.map((n) => n.name);
       setSelected(newSelecteds);
       return;
     }
     setSelected([]);
   };
 
+  const checkStep2Valid = () => {
+    SetIsValidStep2((a) => !a);
+  }
+
   const handleClick = (event, name) => {
+
     const selectedIndex = selected.indexOf(name);
     let newSelected = [];
     if (selectedIndex === -1) {
@@ -69,6 +73,7 @@ export default function UserPage() {
         selected.slice(selectedIndex + 1)
       );
     }
+    console.log(newSelected)
     setSelected(newSelected);
   };
 
@@ -87,87 +92,116 @@ export default function UserPage() {
   };
 
   const dataFiltered = applyFilter({
-    inputData: users,
+    inputData: userData,
     comparator: getComparator(order, orderBy),
     filterName,
   });
 
   const notFound = !dataFiltered.length && !!filterName;
 
+  useEffect(() => {
+    const auth_token = localStorage.getItem("auth_token");
+    const auth_token_type = localStorage.getItem("auth_token_type");
+    const token = `${auth_token_type} ${auth_token}`;
+
+    axios.get("http://localhost:8080/users/all", {
+      headers: { Authorization: token },
+    })
+      .then((res) => {
+        setUserData(res.data.result);
+      })
+  }, [])
+
+  const Step1 = (
+    <Card>
+      <UserTableToolbar
+        numSelected={selected.length}
+        filterName={filterName}
+        onFilterName={handleFilterByName}
+      />
+
+      <Scrollbar>
+        <TableContainer sx={{ overflow: 'unset' }}>
+          <Table sx={{ minWidth: 800 }}>
+            <UserTableHead
+              order={order}
+              orderBy={orderBy}
+              rowCount={userData.length}
+              numSelected={selected.length}
+              onRequestSort={handleSort}
+              onSelectAllClick={handleSelectAllClick}
+              headLabel={[
+                { id: 'first_name', label: 'First Name' },
+                { id: 'last_name', label: 'Last Name' },
+                { id: 'email', label: 'Email' },
+                { id: '' },
+              ]}
+            />
+            <TableBody>
+              {userData
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((row) => (
+                  <UserTableRow
+                    key={row.id}
+                    first_name={row.first_name}
+                    last_name={row.last_name}
+                    email={row.email}
+                    image={row.image}
+                    name={row.first_name}
+                    role={row.last_name}
+                    status={row.email}
+                    // company={row.company}
+                    avatarUrl={row.image}
+                    //  isVerified={row.isVerified}
+                    selected={selected.indexOf(row.id) !== -1}
+                    handleClick={(event) => handleClick(event, row.id)}
+                  />
+                ))}
+
+              <TableEmptyRows
+                height={77}
+                emptyRows={emptyRows(page, rowsPerPage, userData.length)}
+              />
+
+              {notFound && <TableNoData query={filterName} />}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Scrollbar>
+
+      <TablePagination
+        page={page}
+        component="div"
+        count={userData.length}
+        rowsPerPage={rowsPerPage}
+        onPageChange={handleChangePage}
+        rowsPerPageOptions={[5, 10, 25]}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
+    </Card>
+
+  );
+
+
+  const Step2 = (
+    <Card>
+      <Typography>
+        Hello
+      </Typography>
+    </Card>
+  )
+
   return (
     <Container>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-        <Typography variant="h4">Users</Typography>
+        {/* <Typography variant="h4">Users</Typography> */}
 
-        <Button variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />}>
+        {/* <Button variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />}>
           New User
-        </Button>
+        </Button> */}
       </Stack>
-
-      <Card>
-        <UserTableToolbar
-          numSelected={selected.length}
-          filterName={filterName}
-          onFilterName={handleFilterByName}
-        />
-
-        <Scrollbar>
-          <TableContainer sx={{ overflow: 'unset' }}>
-            <Table sx={{ minWidth: 800 }}>
-              <UserTableHead
-                order={order}
-                orderBy={orderBy}
-                rowCount={users.length}
-                numSelected={selected.length}
-                onRequestSort={handleSort}
-                onSelectAllClick={handleSelectAllClick}
-                headLabel={[
-                  { id: 'name', label: 'Name' },
-                  { id: 'company', label: 'Company' },
-                  { id: 'role', label: 'Role' },
-                  { id: 'isVerified', label: 'Verified', align: 'center' },
-                  { id: 'status', label: 'Status' },
-                  { id: '' },
-                ]}
-              />
-              <TableBody>
-                {dataFiltered
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((row) => (
-                    <UserTableRow
-                      key={row.id}
-                      name={row.name}
-                      role={row.role}
-                      status={row.status}
-                      company={row.company}
-                      avatarUrl={row.avatarUrl}
-                      isVerified={row.isVerified}
-                      selected={selected.indexOf(row.name) !== -1}
-                      handleClick={(event) => handleClick(event, row.name)}
-                    />
-                  ))}
-
-                <TableEmptyRows
-                  height={77}
-                  emptyRows={emptyRows(page, rowsPerPage, users.length)}
-                />
-
-                {notFound && <TableNoData query={filterName} />}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Scrollbar>
-
-        <TablePagination
-          page={page}
-          component="div"
-          count={users.length}
-          rowsPerPage={rowsPerPage}
-          onPageChange={handleChangePage}
-          rowsPerPageOptions={[5, 10, 25]}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-      </Card>
+      <HorizontalLinearStepper id={selected} handleIsValidStep2={checkStep2Valid} />
+      {!isValidStep2 ? Step1 : Step2}
     </Container>
   );
 }

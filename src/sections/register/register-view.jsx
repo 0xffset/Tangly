@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { Navigate } from "react-router-dom";
 import { useState, useCallback } from 'react';
 
 import { Box } from '@mui/material';
@@ -34,7 +33,7 @@ export default function RegisterView() {
   const handleClick = async () => {
 
 
-    await axios.post('http://localhost:3694/auth/register', {
+    await axios.post('http://localhost:8080/auth/register', {
       email: formValues.email,
       first_name: formValues.first_name,
       last_name: formValues.last_name,
@@ -169,7 +168,7 @@ export default function RegisterView() {
           onChange={handleInputChange}
           required
           name="first_name"
-          label="Nombre"
+          label="First Name"
           value={formValues.first_name}
           helperText={isValidFirstName[1]}
           error={!isValidFirstName[0]}
@@ -177,7 +176,7 @@ export default function RegisterView() {
         <TextField name="last_name"
           value={formValues.last_name}
           onChange={handleInputChange}
-          label="Apellido" />
+          label="Last Name" />
         <TextField required
           onChange={handleInputChange}
           error={!isValidEmail[0]}
@@ -188,7 +187,7 @@ export default function RegisterView() {
           name="password"
           value={formValues.password}
           onChange={handleInputChange}
-          label="Contraseña"
+          label="Password"
           type={showPassword ? 'text' : 'password'}
           helperText={message}
           color={getActiveColor(message)}
@@ -205,7 +204,7 @@ export default function RegisterView() {
 
         <TextField required focused={formValues.repeat_password.trim().length > 0}
           name="repeat_password"
-          label="Repetir contraseña"
+          label="Repeat Password"
           value={formValues.repeat_password}
           onChange={handleInputChange}
           helperText={isValidRepeatPassword[1]}

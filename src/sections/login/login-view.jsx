@@ -1,12 +1,16 @@
+import axios from 'axios';
 import { useState } from 'react';
 
-import {Box} from '@mui/material';
+import { Box } from '@mui/material';
 import Card from '@mui/material/Card';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
+import Alert from '@mui/material/Alert';
+import Collapse from '@mui/material/Collapse';
 import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
+import CloseIcon from '@mui/icons-material/Close';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { alpha, useTheme } from '@mui/material/styles';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -26,18 +30,48 @@ export default function LoginView() {
   const router = useRouter();
 
   const [showPassword, setShowPassword] = useState(false);
-
-  const handleClick = () => {
-    router.push('/dashboard');
+  const [openAlert, setOpenAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+  const [formValues, setFormValues] = useState({
+    email: "",
+    password: ""
+  });
+  const handleInputChangedLogin = (e) => {
+    const { name, value } = e.target;
+    setFormValues((prev) => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+  const handleClick = async () => {
+    await axios.post('http://localhost:8080/auth/login', {
+      email: formValues.email,
+      password: formValues.password
+    })
+      .then((res) => {
+        if (res.status === 200) {
+          localStorage.setItem("auth_token", res.data.result.access_token);
+          localStorage.setItem("auth_token_type", res.data.result.token_type);
+          router.push('/');
+        }
+      })
+      .catch((res) => {
+        setAlertMessage(res.response.data.detail)
+        setOpenAlert(true);
+      })
   };
 
   const renderForm = (
     <>
       <Stack spacing={3}>
-        <TextField name="email" label="Email" />
+        <TextField name="email" label="Email" required
+          onChange={handleInputChangedLogin}
+        />
         <TextField
           name="password"
-          label="Contraseña"
+          label="Password"
+          required
+          onChange={handleInputChangedLogin}
           type={showPassword ? 'text' : 'password'}
           InputProps={{
             endAdornment: (
@@ -53,10 +87,31 @@ export default function LoginView() {
 
       <Stack direction="row" alignItems="center" justifyContent="flex-end" sx={{ my: 3 }}>
         <Link variant="subtitle2" underline="hover">
-          Olvidaste tú constraseña?
+         Forgot your password?
         </Link>
       </Stack>
-
+      <Box sx={{ width: '100%' }}>
+        <Collapse in={openAlert}>
+          <Alert
+            severity="error"
+            action={
+              <IconButton
+                aria-label="close"
+                color="inherit"
+                size="small"
+                onClick={() => {
+                  setOpenAlert(false);
+                }}
+              >
+                <CloseIcon fontSize="inherit" />
+              </IconButton>
+            }
+            sx={{ mb: 2 }}
+          >
+            {alertMessage}
+          </Alert>
+        </Collapse>
+      </Box>
       <LoadingButton
         fullWidth
         size="large"
@@ -65,7 +120,7 @@ export default function LoginView() {
         color="inherit"
         onClick={handleClick}
       >
-        Iniciar
+        Log in
       </LoadingButton>
     </>
   );
@@ -99,9 +154,9 @@ export default function LoginView() {
           <Typography variant="h4">Iniciar en Tangly</Typography>
 
           <Typography variant="body2" sx={{ mt: 2, mb: 5 }}>
-             Aún no tienes una cuenta.
+            Do not have accout?
             <Link variant="subtitle2" sx={{ ml: 0.5 }}>
-              <a href='/register'>Registrarse</a>
+              <a href='/register'>Register</a>
             </Link>
           </Typography>
           {renderForm}

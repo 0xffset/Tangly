@@ -1,11 +1,15 @@
+import axios from 'axios';
 import PropTypes from 'prop-types';
+import { useState, useEffect } from 'react';
 
-import {Box } from '@mui/material';
+import { Box } from '@mui/material';
 import Stack from '@mui/material/Stack';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import { useTheme } from '@mui/material/styles';
 import IconButton from '@mui/material/IconButton';
+
+import { useRouter } from 'src/routes/hooks';
 
 import { useResponsive } from 'src/hooks/use-responsive';
 
@@ -23,9 +27,26 @@ import NotificationsPopover from './common/notifications-popover';
 
 export default function Header({ onOpenNav }) {
   const theme = useTheme();
+  const router = useRouter();
 
   const lgUp = useResponsive('up', 'lg');
+  const [user, setUser] = useState({});
 
+  useEffect(() => {
+    const auth_token = localStorage.getItem("auth_token");
+    const auth_token_type = localStorage.getItem("auth_token_type");
+    const token = `${auth_token_type} ${auth_token}`;
+
+    axios.get("http://localhost:8080/users/", {
+      headers: { Authorization: token },
+    })
+      .then((response) => {
+        setUser(response.data.result);
+      })
+      .catch((error) => {
+        console.log(error);
+      }, [])
+  }, [router])
   const renderContent = (
     <>
       {!lgUp && (
@@ -41,7 +62,7 @@ export default function Header({ onOpenNav }) {
       <Stack direction="row" alignItems="center" spacing={1}>
         <LanguagePopover />
         <NotificationsPopover />
-        <AccountPopover />
+        <AccountPopover image={user.image} username={`${user.first_name} ${user.last_name}`} email={user.email} />
       </Stack>
     </>
   );

@@ -55,7 +55,7 @@ class AuthService:
         if _user is not None:
             if not pwd_context.verify(login.password, _user.password):
                 raise HTTPException(status_code=400, detail="Invalid password")
-            return JWTRepo(data={"email": _user.email}).generate_token()
+            return JWTRepo(data={"email": _user.email,"id": _user.id}).generate_token()
         raise HTTPException(status_code=404, detail="User not found")
 
     @staticmethod
