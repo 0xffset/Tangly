@@ -1,8 +1,10 @@
+import select
 import uvicorn
 from fastapi import FastAPI, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import db
 from app.service.auth_service import generate_status_transactions
+from app.service.tangle_service import generate_tangle_template
 
 origins = ["http://localhost:3030"]
 
@@ -22,15 +24,17 @@ def init_app():
     async def startup():
         await db.create_all()
         await generate_status_transactions()
+        await generate_tangle_template()
 
     @app.on_event("shutdown")
     async def shutdown():
         await db.close()
 
-    from app.controller import authentication, users
+    from app.controller import authentication, users, tangle
 
     app.include_router(authentication.router)
     app.include_router(users.router)
+    app.include_router(tangle.router)
 
     return app
 
@@ -40,4 +44,4 @@ app = init_app()
 
 def start():
     """Launched with 'poetry run start' at root level"""
-    uvicorn.run("app.main:app", host="localhost", port=8080, reload=True)
+    uvicorn.run("app.main:app", host="localhost", port=5555, reload=True)

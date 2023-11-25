@@ -151,7 +151,7 @@ export default function LoginView() {
             maxWidth: 420,
           }}
         >
-          <Typography variant="h4">Iniciar en Tangly</Typography>
+          <Typography variant="h4">Log in on Tangly</Typography>
 
           <Typography variant="body2" sx={{ mt: 2, mb: 5 }}>
             Do not have accout?

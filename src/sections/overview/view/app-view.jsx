@@ -6,18 +6,12 @@ import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Unstable_Grid2/Grid2';
 
-import Iconify from 'src/components/iconify';
+import { fTimestampToDate } from 'src/utils/format-time';
 
-import AppTasks from '../app-tasks';
 import AppNewsUpdate from '../app-news-update';
 import AppOrderTimeline from '../app-order-timeline';
-import AppCurrentVisits from '../app-current-visits';
 import AppWebsiteVisits from '../app-website-visits';
 import AppWidgetSummary from '../app-widget-summary';
-import AppTrafficBySite from '../app-traffic-by-site';
-import AppCurrentSubject from '../app-current-subject';
-import AppConversionRates from '../app-conversion-rates';
-
 // ----------------------------------------------------------------------
 
 
@@ -26,21 +20,34 @@ import AppConversionRates from '../app-conversion-rates';
 export default function AppView() {
 
   const [user, setUser] = useState({});
+  const [statistics, setStatistics] = useState({});
+  const [lastsTransactions, setLastsTransactions] = useState([]);
+  const [graphData, setGraphData] = useState([])
 
   useEffect(() => {
     const auth_token = localStorage.getItem("auth_token");
     const auth_token_type = localStorage.getItem("auth_token_type");
     const token = `${auth_token_type} ${auth_token}`;
-    axios.get("http://localhost:8080/users/", {
+
+
+    axios.all([axios.get("http://localhost:5555/users/", {
       headers: { Authorization: token },
-    })
-      .then((response) => {
-        console.log(response)
-        setUser(response.data.result);
-      })
-      .catch((error) => {
-        console.log(error);
-      })
+    }), axios.get("http://localhost:5555/tangle/transaction/statistics", {
+      headers: { Authorization: token }
+    }), axios.get("http://localhost:5555/tangle/transaction/user", {
+      headers: { Authorization: token }
+    }), axios.get("http://localhost:5555/tangle/transactions/graph", {
+      headers: { Authorization: token }
+    })]).then(axios.spread((res1, res2, res3, res4) => {
+      console.log(res2)
+      console.log(res1)
+      console.log(res3)
+      console.log(res4.data.result.transactions_sended_per_day)
+      setUser(res1.data.result)
+      setStatistics(res2.data.result)
+      setLastsTransactions(res3.data.result)
+      setGraphData(res4.data.result)
+    }))
   }, []);
 
 
@@ -54,7 +61,7 @@ export default function AppView() {
         <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
             title="Transations Sended"
-            total={714000}
+            total={statistics.total_sended_transactions}
             color="success"
             icon={<img alt="icon" src="/assets/icons/glass/ic_glass_bag.png" />}
           />
@@ -63,7 +70,7 @@ export default function AppView() {
         <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
             title="Transactions Received"
-            total={1352831}
+            total={statistics.total_received_transactions}
             color="info"
             icon={<img alt="icon" src="/assets/icons/glass/ic_glass_users.png" />}
           />
@@ -72,64 +79,52 @@ export default function AppView() {
         <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
             title="Total Transactions"
-            total={1723315}
+            total={statistics.total_transactions}
             color="warning"
             icon={<img alt="icon" src="/assets/icons/glass/ic_glass_buy.png" />}
           />
         </Grid>
 
-        <Grid xs={12} sm={6} md={3}>
+        {/* <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
             title="Networkign Status"
             total={234}
             color="error"
             icon={<img alt="icon" src="/assets/icons/glass/ic_glass_message.png" />}
           />
-        </Grid>
+        </Grid> */}
 
         <Grid xs={12} md={6} lg={8}>
           <AppWebsiteVisits
-            title="Website Visits"
-            subheader="(+43%) than last year"
+            title="Graph's Transaction"
+            subheader="Transactions send/recieve per day"
             chart={{
-              labels: [
-                '01/01/2003',
-                '02/01/2003',
-                '03/01/2003',
-                '04/01/2003',
-                '05/01/2003',
-                '06/01/2003',
-                '07/01/2003',
-                '08/01/2003',
-                '09/01/2003',
-                '10/01/2003',
-                '11/01/2003',
-              ],
+              labels: graphData.labels,
               series: [
                 {
-                  name: 'Team A',
+                  name: 'Send',
                   type: 'column',
                   fill: 'solid',
-                  data: [23, 11, 22, 27, 13, 22, 37, 21, 44, 22, 30],
+                  data: graphData.transactions_sended_per_day,
                 },
                 {
-                  name: 'Team B',
+                  name: 'Send',
                   type: 'area',
                   fill: 'gradient',
-                  data: [44, 55, 41, 67, 22, 43, 21, 41, 56, 27, 43],
+                  data: graphData.transactions_sended_per_day,
                 },
                 {
-                  name: 'Team C',
+                  name: 'Receive',
                   type: 'line',
                   fill: 'solid',
-                  data: [30, 25, 36, 30, 45, 35, 64, 52, 59, 36, 39],
+                  data: [graphData.transactions_received_per_day],
                 },
               ],
             }}
           />
         </Grid>
 
-        <Grid xs={12} md={6} lg={4}>
+        {/* <Grid xs={12} md={6} lg={4}>
           <AppCurrentVisits
             title="Current Visits"
             chart={{
@@ -141,9 +136,9 @@ export default function AppView() {
               ],
             }}
           />
-        </Grid>
+        </Grid> */}
 
-        <Grid xs={12} md={6} lg={8}>
+        {/* <Grid xs={12} md={6} lg={8}>
           <AppConversionRates
             title="Conversion Rates"
             subheader="(+43%) than last year"
@@ -162,9 +157,9 @@ export default function AppView() {
               ],
             }}
           />
-        </Grid>
+        </Grid> */}
 
-        <Grid xs={12} md={6} lg={4}>
+        {/* <Grid xs={12} md={6} lg={4}>
           <AppCurrentSubject
             title="Current Subject"
             chart={{
@@ -176,11 +171,11 @@ export default function AppView() {
               ],
             }}
           />
-        </Grid>
+        </Grid> */}
 
-        <Grid xs={12} md={6} lg={8}>
+        {/* <Grid xs={12} md={6} lg={8}>
           <AppNewsUpdate
-            title="News Update"
+            title="Last Transactions"
             list={[...Array(5)].map((_, index) => ({
               id: faker.string.uuid(),
               title: faker.person.jobTitle(),
@@ -189,64 +184,30 @@ export default function AppView() {
               postedAt: faker.date.recent(),
             }))}
           />
-        </Grid>
+        </Grid> */}
 
-        <Grid xs={12} md={6} lg={4}>
-          <AppOrderTimeline
-            title="Order Timeline"
-            list={[...Array(5)].map((_, index) => ({
+        <Grid xs={12} md={6} lg={8}>
+          <AppNewsUpdate
+            title="Last Transactions"
+            list={lastsTransactions.map((value, index) => ({
               id: faker.string.uuid(),
-              title: [
-                '1983, orders, $4220',
-                '12 Invoices have been paid',
-                'Order #37745 from September',
-                'New order placed #XF-2356',
-                'New order placed #XF-2346',
-              ][index],
-              type: `order${index + 1}`,
-              time: faker.date.past(),
+              title: value.type === "sender" ? "Transaction Sended" : "Transaction Received",
+              description: value.type === "sender" ? `You send a transaction to ${value.recipient}` : `You received a transaction from ${value.sender}`,
+              image: value.type === "sender" ? "/assets/icons/sender-icon.png" : "/assets/icons/recipient-icon.png",
+              postedAt: fTimestampToDate(value.timestamp),
             }))}
           />
         </Grid>
 
         <Grid xs={12} md={6} lg={4}>
-          <AppTrafficBySite
-            title="Traffic by Site"
-            list={[
-              {
-                name: 'FaceBook',
-                value: 323234,
-                icon: <Iconify icon="eva:facebook-fill" color="#1877F2" width={32} />,
-              },
-              {
-                name: 'Google',
-                value: 341212,
-                icon: <Iconify icon="eva:google-fill" color="#DF3E30" width={32} />,
-              },
-              {
-                name: 'Linkedin',
-                value: 411213,
-                icon: <Iconify icon="eva:linkedin-fill" color="#006097" width={32} />,
-              },
-              {
-                name: 'Twitter',
-                value: 443232,
-                icon: <Iconify icon="eva:twitter-fill" color="#1C9CEA" width={32} />,
-              },
-            ]}
-          />
-        </Grid>
-
-        <Grid xs={12} md={6} lg={8}>
-          <AppTasks
-            title="Tasks"
-            list={[
-              { id: '1', name: 'Create FireStone Logo' },
-              { id: '2', name: 'Add SCSS and JS files if required' },
-              { id: '3', name: 'Stakeholder Meeting' },
-              { id: '4', name: 'Scoping & Estimations' },
-              { id: '5', name: 'Sprint Showcase' },
-            ]}
+          <AppOrderTimeline
+            title="Last Transactions Timeline"
+            list={lastsTransactions.map((value, index) => ({
+              id: faker.string.uuid(),
+              title: lastsTransactions.map((i) => i.type === "sender" ? `Send to ${i.recipient}` : `Receive from ${i.sender}`)[index],
+              type: `order${index + 1}`,
+              time: fTimestampToDate(value.timestamp),
+            }))}
           />
         </Grid>
       </Grid>

@@ -1,16 +1,23 @@
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 
+import { Grid } from '@mui/material';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Table from '@mui/material/Table';
+import Alert from '@mui/material/Alert';
+import Collapse from '@mui/material/Collapse';
 import Container from '@mui/material/Container';
 import TableBody from '@mui/material/TableBody';
-import Typography from '@mui/material/Typography';
+import SendIcon from '@mui/icons-material/Send';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
+import LoadingButton from '@mui/lab/LoadingButton';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
 
 import Scrollbar from 'src/components/scrollbar';
+import FileUpload from 'src/components/drop-upload-file/FileUpload';
 import HorizontalLinearStepper from 'src/components/strapper/strapper';
 
 import TableNoData from '../table-no-data';
@@ -36,6 +43,15 @@ export default function UserPage() {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [userData, setUserData] = useState([]);
   const [isValidStep2, SetIsValidStep2] = useState(false);
+  const [isValidStep3, SetIsValidStep3] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [disabled, setDisabled] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [transactionData, setTransactionData] = useState({
+    'recipient': '',
+    'file': ''
+  });
+
   const handleSort = (event, id) => {
     const isAsc = orderBy === id && order === 'asc';
     if (id !== '') {
@@ -53,8 +69,11 @@ export default function UserPage() {
     setSelected([]);
   };
 
-  const checkStep2Valid = () => {
-    SetIsValidStep2((a) => !a);
+  const checkStep2Valid = (value) => {
+    SetIsValidStep2(value);
+  }
+  const checkStep3Valid = (value) => {
+    SetIsValidStep3(value);
   }
 
   const handleClick = (event, name) => {
@@ -74,6 +93,10 @@ export default function UserPage() {
       );
     }
     console.log(newSelected)
+    setTransactionData((prev) => ({
+      ...prev,
+      recipient: newSelected[0]
+    }));
     setSelected(newSelected);
   };
 
@@ -111,6 +134,59 @@ export default function UserPage() {
         setUserData(res.data.result);
       })
   }, [])
+
+
+  const handleClickSendTransaction = () => {
+    const auth_token = localStorage.getItem("auth_token");
+    const auth_token_type = localStorage.getItem("auth_token_type");
+    const token = `${auth_token_type} ${auth_token}`;
+    const url = `http://localhost:5555/tangle/transaction/new?recipient=${transactionData.recipient}`;
+    setLoading(true);
+    const formData = new FormData();
+    formData.append("recipient", transactionData.recipient);
+    formData.append("file", transactionData.file);
+    const config = {
+      headers: {
+        'Accept': 'application/json',
+        'content-type': 'multipart/form-data',
+        'Authorization': token
+      }
+    }
+    axios.post(url, formData, config).then((res) => {
+      console.log(res)
+      setTransactionData({ file: '', recipient: '' })
+      setLoading(false);
+      setDisabled(true);
+      setOpen(true);
+    }).catch((err) => {
+      console.log(err)
+      setLoading(false);
+    })
+  }
+  const FileUploadProps = {
+    accept: 'image/* video/* file/*',
+    onChange: (event) => {
+      if (
+        event.target.files !== null &&
+        event.target?.files?.length > 0
+      ) {
+        setTransactionData((prev) => ({
+          ...prev,
+          file: event.target.files[0]
+        }))
+
+      }
+    },
+    onDrop: (event) => {
+      setTransactionData((prev) => ({
+        ...prev,
+        file: event.target.files[0]
+      }))
+
+    },
+  }
+
+
 
   const Step1 = (
     <Card>
@@ -184,11 +260,56 @@ export default function UserPage() {
 
 
   const Step2 = (
-    <Card>
-      <Typography>
-        Hello
-      </Typography>
-    </Card>
+    <Stack spacing={3}>
+      <FileUpload {...FileUploadProps} />
+    </Stack>
+  );
+
+  const Step3 = (
+    <Stack spacing={3}>
+      
+       <Collapse in={open}>
+        <Alert
+          action={
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              onClick={() => {
+                setOpen(false);
+              }}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+          sx={{ mb: 2 }}
+        >
+          Transaction was send successfully!
+        </Alert>
+      </Collapse>
+
+      <Grid container
+        spacing={0}
+        direction="column"
+        alignItems="center"
+        justify="center"
+        style={{ minHeight: '100vh' }}>
+        <LoadingButton
+          disabled={disabled}
+          onClick={handleClickSendTransaction}
+          loading={loading}
+          startIcon={<SendIcon />}
+          loadingPosition="start"
+          variant="contained"
+        >
+          <span>Send transaction</span>
+        </LoadingButton>
+
+        {/* <Button variant="contained" onClick={handleClickSendTransaction}>
+          Send transaction
+        </Button> */}
+      </Grid>
+    </Stack>
   )
 
   return (
@@ -200,8 +321,21 @@ export default function UserPage() {
           New User
         </Button> */}
       </Stack>
-      <HorizontalLinearStepper id={selected} handleIsValidStep2={checkStep2Valid} />
-      {!isValidStep2 ? Step1 : Step2}
+      <HorizontalLinearStepper id={selected} handleIsValidStep2={checkStep2Valid}
+        handleIsValidStep3={checkStep3Valid} fileSelected={transactionData.file.length !== 0} />
+      { }
+
+      {
+        (() => {
+          if (isValidStep2 && !isValidStep3) {
+            return Step2;
+          }
+          if (!isValidStep2 && isValidStep3) {
+            return Step3;
+          }
+          return Step1;
+        })()
+      }
     </Container>
   );
 }

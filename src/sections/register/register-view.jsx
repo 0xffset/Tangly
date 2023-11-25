@@ -285,12 +285,12 @@ export default function RegisterView() {
             maxWidth: 420,
           }}
         >
-          <Typography variant="h4">Registrarse en Tangly</Typography>
+          <Typography variant="h4">Register on Tangly</Typography>
 
           <Typography variant="body2" sx={{ mt: 2, mb: 5 }}>
-            Ya tienes cuenta?
+            Already has account?
             <Link variant="subtitle2" sx={{ ml: 0.5 }}>
-              <a href='/login'>Inicial</a>
+              <a href='/login'>Log in</a>
             </Link>
           </Typography>
           {renderForm}

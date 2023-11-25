@@ -17,6 +17,10 @@ alembic = "^1.12.1"
 passlib = {extras = ["bcrypt"], version = "^1.7.4"}
 python-jose = {extras = ["cryptography"], version = "^3.3.0"}
 requests = "^2.31.0"
+redis = "^5.0.1"
+python-dotenv = "^1.0.0"
+aioredis = "2.0.0"
+python-multipart = "^0.0.6"
 
 
 [build-system]

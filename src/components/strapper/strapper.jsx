@@ -10,9 +10,9 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import { Box, Button, Stepper } from '@mui/material';
 
-const steps = ['Select recipient', 'Enter the information to send', 'Transaction sended'];
+const steps = ['Select recipient', 'Select the file', 'Send Transaction'];
 
-export default function HorizontalLinearStepper({ id: ids, selected, handleIsValidStep2 }) {
+export default function HorizontalLinearStepper({ id: ids, selected, handleIsValidStep2, handleIsValidStep3, fileSelected }) {
   const [activeStep, setActiveStep] = React.useState(0);
   const [skipped, setSkipped] = React.useState(new Set());
   const [openAlert, setOpenAlert] = React.useState(false);
@@ -22,14 +22,30 @@ export default function HorizontalLinearStepper({ id: ids, selected, handleIsVal
   const isStepSkipped = (step) => skipped.has(step);
 
   const handleNext = () => {
-
+    console.log(activeStep)
     let newSkipped = skipped;
-    console.log(ids);
+    if (ids.length > 1) {
+      setOpenAlert(true);
+      setAlertMessage("For the moment, just allow select one recipient per transaction.");
+      return
+    }
     if (ids.length === 0 || ids === undefined) {
       setOpenAlert(true);
-      setAlertMessage("You must select a recipient first");
-    } else {
-      handleIsValidStep2();
+      setAlertMessage("You must select a recipient.");
+    } else if (activeStep === 0) {
+      handleIsValidStep2(true);
+      newSkipped = new Set(newSkipped.values());
+      newSkipped.delete(activeStep);
+      setActiveStep((prevActiveStep) => prevActiveStep + 1);
+      setSkipped(newSkipped);
+    }
+    else if (activeStep === 1 && !fileSelected) {
+      setOpenAlert(true);
+      setAlertMessage("You must select a file.");
+    }
+    else {
+      handleIsValidStep2(false); // false
+      handleIsValidStep3(true); // true
       newSkipped = new Set(newSkipped.values());
       newSkipped.delete(activeStep);
       setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -38,8 +54,13 @@ export default function HorizontalLinearStepper({ id: ids, selected, handleIsVal
   };
 
   const handleBack = () => {
+    if (activeStep === 2) {
+      handleIsValidStep3(false);
+      handleIsValidStep2(true)
+    }
     if (activeStep === 1) {
-      handleIsValidStep2();
+      handleIsValidStep2(false);
+      handleIsValidStep3(false);
     }
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
 
@@ -61,6 +82,8 @@ export default function HorizontalLinearStepper({ id: ids, selected, handleIsVal
   };
 
   const handleReset = () => {
+    handleIsValidStep2(false)
+    handleIsValidStep3(false)
     setActiveStep(0);
   };
 
@@ -92,7 +115,7 @@ export default function HorizontalLinearStepper({ id: ids, selected, handleIsVal
           </Typography>
           <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
             <Box sx={{ flex: '1 1 auto' }} />
-            <Button onClick={handleReset}>Reset</Button>
+            <Button onClick={handleReset}>Send other transaction</Button>
           </Box>
         </>
       ) : (
@@ -143,5 +166,7 @@ export default function HorizontalLinearStepper({ id: ids, selected, handleIsVal
 HorizontalLinearStepper.propTypes = {
   id: PropTypes.array,
   selected: PropTypes.bool,
+  fileSelected: PropTypes.bool,
   handleIsValidStep2: PropTypes.func,
+  handleIsValidStep3: PropTypes.func
 }

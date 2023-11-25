@@ -25,3 +25,9 @@ export function fToNow(date) {
       })
     : '';
 }
+
+export function fTimestampToDate(timestemp) {
+  const ml = timestemp * 1000;
+  const dateObj = new Date(ml)
+  return dateObj
+}

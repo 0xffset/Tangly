@@ -1,4 +1,4 @@
-from fastapi import HTTPException
+from fastapi import HTTPException, UploadFile
 import logging
 import re
 from typing import TypeVar, Optional
@@ -87,6 +87,31 @@ class LoginSchema(BaseModel):
 class ForgotPasswordSchema(BaseModel):
     email: str
     new_password: str
+
+
+class TanglePeerSchema(BaseModel):
+    index: int
+    timestamp: str
+    data: Optional[T] = None
+    proof: int
+    previous_hash: Optional[T] = None
+    previous_nodes: Optional[T] = None
+    next_nodes: Optional[T] = None
+    validity: int
+    length: int
+
+
+class TangleNewTransactionSchema(BaseModel):
+    sender: str
+    recipient: str
+
+
+class TangleGetNodeDetailsSchema(BaseModel):
+    index: int
+
+
+class TangleGetAllPeerTransactionsSchema(BaseModel):
+    sender: str
 
 
 class DetailSchema(BaseModel):

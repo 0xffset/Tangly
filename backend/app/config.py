@@ -6,7 +6,7 @@ DB_CONFIG = f"postgresql+asyncpg://postgres:3301:postgres@localhost:5433/tangly"
 
 SECRET_KEY = "hHQE8&R<+lbQ:y}"
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXIPIRE_MINUTES = 5
+ACCESS_TOKEN_EXIPIRE_MINUTES = 10080
 
 
 class AsyncDatabaseSession:
