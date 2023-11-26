@@ -19,7 +19,7 @@ const navConfig = [
   },
   {
     title: 'Decrypt Files',
-    path: '/products',
+    path: '/decrypt',
     icon: icon('ic_cart'),
   },
   {

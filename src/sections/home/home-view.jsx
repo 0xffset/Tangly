@@ -15,7 +15,7 @@ function Copyright() {
     return (
         <Typography variant="body2" color="text.secondary">
             {'Copyright © '}
-            <Link color="inherit" href="https://mui.com/">
+            <Link color="inherit" href="/">
                 Tangly
             </Link>{' '}
             {new Date().getFullYear()}
@@ -78,11 +78,11 @@ export default function HomeView() {
                             Tangly
                         </Typography>
                         <Typography variant="h5" align="center" color="text.secondary" component="p">
-                            Solución segura y escalable para transacciones descentralizadas. ¡Únete a la revolución tecnológica!
+                        Secure and scalable solution for decentralized transactions. Join to the tech revolution!
                         </Typography>
                         <Box textAlign='center'>
                             <Button variant='text' style={{ backgroundColor: 'transparent', color: 'black', textTransform: 'none' }} onClick={handleClick}>
-                                Continuar
+                                Continue
                             </Button>
                         </Box>
                     </Container>
@@ -97,13 +97,13 @@ export default function HomeView() {
                            Tangle.
                         </Typography>
                         <Typography style={{ fontSize: '1.25rem', lineHeight: '1.6', color: '#333', margin: '1.5rem 0' }} variant="h5" color="text.secondary" component="p">
-                            En el contexto de la red Tangle, que es la tecnología subyacente a IOTA (una criptomoneda diseñada para la Internet de las cosas), los peers se refieren a los nodos individuales que participan en la red. Cada nodo en la red Tangle es un par (peer) que puede enviar, recibir y validar transacciones.
-                            A diferencia de algunas otras criptomonedas basadas en cadenas de bloques, en la red Tangle, no hay bloques ni mineros.
+                        In the context of the Tangle network, which is the technology underlying IOTA (a cryptocurrency designed for the Internet of Things), peers refer to the individual nodes participating in the network. Each node in the Tangle network is a peer that can send, receive and validate transactions.
+                            Unlike some other blockchain-based cryptocurrencies, on the Tangle network, there are no blocks or miners.
                         </Typography>
                         <Box sx={{ m: 2 }} />
                         <Typography style={{ fontSize: '1.25rem', lineHeight: '1.6', color: '#333', margin: '1.5rem 0' }} variant="h5" color="text.secondary" component="p">
-                            En lugar de una cadena de bloques, la red Tangle utiliza una estructura gráfica acíclica dirigida (DAG, por sus siglas en inglés)
-                            en la que cada transacción se conecta directamente con dos transacciones anteriores. Cuando un usuario quiere enviar una transacción, primero valida dos transacciones anteriores y agrega la suya al Tangle. Este enfoque descentralizado y sin bloques permite un mayor paralelismo y escalabilidad.
+                        Instead of a blockchain, the Tangle network uses a directed acyclic graph (DAG) structure.
+                            in which each transaction is directly connected to two previous transactions. When a user wants to submit a transaction, they first validate two previous transactions and add their own to the Tangle. This decentralized, blockless approach allows for greater parallelism and scalability.
                         </Typography>
                     </Container>
                 </Box>

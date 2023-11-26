@@ -47,6 +47,8 @@ export default function UserPage() {
   const [loading, setLoading] = useState(false);
   const [disabled, setDisabled] = useState(false);
   const [open, setOpen] = useState(false);
+  const [message, setMessage] = useState('');
+  const [type, setType] = useState('info');
   const [transactionData, setTransactionData] = useState({
     'recipient': '',
     'file': ''
@@ -70,6 +72,7 @@ export default function UserPage() {
   };
 
   const checkStep2Valid = (value) => {
+    setDisabled(false)
     SetIsValidStep2(value);
   }
   const checkStep3Valid = (value) => {
@@ -77,7 +80,7 @@ export default function UserPage() {
   }
 
   const handleClick = (event, name) => {
-
+    console.log(selected)
     const selectedIndex = selected.indexOf(name);
     let newSelected = [];
     if (selectedIndex === -1) {
@@ -140,7 +143,7 @@ export default function UserPage() {
     const auth_token = localStorage.getItem("auth_token");
     const auth_token_type = localStorage.getItem("auth_token_type");
     const token = `${auth_token_type} ${auth_token}`;
-    const url = `http://localhost:5555/tangle/transaction/new?recipient=${transactionData.recipient}`;
+    const url = `http://localhost:8080/tangle/transaction/new?recipient=${transactionData.recipient}`;
     setLoading(true);
     const formData = new FormData();
     formData.append("recipient", transactionData.recipient);
@@ -153,14 +156,28 @@ export default function UserPage() {
       }
     }
     axios.post(url, formData, config).then((res) => {
-      console.log(res)
-      setTransactionData({ file: '', recipient: '' })
-      setLoading(false);
-      setDisabled(true);
-      setOpen(true);
+      if (res.data.result.error !== undefined) {
+        setMessage(res.data.result.error)
+        setLoading(false);
+        setDisabled(false);
+        setOpen(true);
+        setType('error');
+      }
+      else if (res.data.result.success !== undefined) {
+        setMessage("Transaction was send successfully!")
+        setLoading(false);
+        setDisabled(true);
+        setOpen(true);
+        setType('success');
+        setTransactionData({ file: '', recipient: '' })
+
+      }
     }).catch((err) => {
-      console.log(err)
+      setMessage("Fields required.")
       setLoading(false);
+      setDisabled(false);
+      setOpen(true);
+      setType('error');
     })
   }
   const FileUploadProps = {
@@ -223,12 +240,7 @@ export default function UserPage() {
                     last_name={row.last_name}
                     email={row.email}
                     image={row.image}
-                    name={row.first_name}
-                    role={row.last_name}
-                    status={row.email}
-                    // company={row.company}
                     avatarUrl={row.image}
-                    //  isVerified={row.isVerified}
                     selected={selected.indexOf(row.id) !== -1}
                     handleClick={(event) => handleClick(event, row.id)}
                   />
@@ -267,9 +279,10 @@ export default function UserPage() {
 
   const Step3 = (
     <Stack spacing={3}>
-      
-       <Collapse in={open}>
+
+      <Collapse in={open}>
         <Alert
+          severity={type}
           action={
             <IconButton
               aria-label="close"
@@ -284,7 +297,7 @@ export default function UserPage() {
           }
           sx={{ mb: 2 }}
         >
-          Transaction was send successfully!
+          {message}
         </Alert>
       </Collapse>
 

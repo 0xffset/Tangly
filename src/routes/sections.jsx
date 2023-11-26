@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react';
 import { Outlet, Navigate, useRoutes } from 'react-router-dom';
 
+import DecryptFilePage from 'src/pages/decry-file';
 import DashboardLayout from 'src/layouts/dashboard';
 
 import PrivateRouter from 'src/sections/privateRouter/privateRouter';
@@ -36,6 +37,7 @@ export default function Router() {
         { path: 'user', element: <PrivateRouter children={<UserPage />} /> },
         { path: 'products', element: <PrivateRouter children={<ProductsPage />} /> },
         { path: 'blog', element: <PrivateRouter children={<BlogPage />} /> },
+        {path: 'decrypt', element: <PrivateRouter children={<DecryptFilePage/>} />},
       ],
     },
     {

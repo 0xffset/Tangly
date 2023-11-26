@@ -26,8 +26,8 @@ export default function HeaderHome({ onOpenNav }) {
             <Box sx={{ flexGrow: 1 }}  />
 
             <Stack direction="row" alignItems="center" spacing={1}>
-                <Button href='/login' style={{ textTransform: 'none', color: 'black', variant: 'raised', backgroundColor: 'transparent' }}>Iniciar</Button>
-                <Button style={{ textTransform: 'none', color: 'black', variant: 'raised', backgroundColor: 'transparent' }}>Registrar</Button>
+                <Button href='/login' style={{ textTransform: 'none', color: 'black', variant: 'raised', backgroundColor: 'transparent' }}>Log in</Button>
+                <Button href='/register' style={{ textTransform: 'none', color: 'black', variant: 'raised', backgroundColor: 'transparent' }}>Register</Button>
             </Stack>
         </>
     );

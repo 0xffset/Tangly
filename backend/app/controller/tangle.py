@@ -43,6 +43,19 @@ async def get_all_transactions_by_peer(
 
 
 @router.get(
+    "/transactions/peers",
+    response_model=ResponseSchema,
+    response_model_exclude_none=True,
+)
+async def get_all_transactions_by_id(
+    crendentials: HTTPAuthorizationCredentials = Security(JWTBearer()),
+):
+    token = JWTRepo.extract_token(crendentials)
+    result = await TangleService.get_all_files_by_id(token["id"])
+    return ResponseSchema(detail="success", result=result)
+
+
+@router.get(
     "/transaction/user", response_model=ResponseSchema, response_model_exclude_none=True
 )
 async def get_all_transactions_by_user_logged(
@@ -56,15 +69,43 @@ async def get_all_transactions_by_user_logged(
 @router.post(
     "/transaction/new", response_model=ResponseSchema, response_model_exclude_none=True
 )
-async def new_transaction(file: UploadFile, recipient, creds: HTTPAuthorizationCredentials = Security(JWTBearer())):
+async def new_transaction(
+    file: UploadFile,
+    recipient,
+    creds: HTTPAuthorizationCredentials = Security(JWTBearer()),
+):
     token = JWTRepo.extract_token(creds)
-    result = await TangleService.make_new_transaction(token["id"], recipient, file)
-    return ResponseSchema(detail="success", result=result)
+    try:
+        result = await TangleService.make_new_transaction(token["id"], recipient, file)
+        return ResponseSchema(detail="success", result={"success": result})
+    except:
+        return ResponseSchema(
+            detail="error", result={"error": "Unable to send the transaction."}
+        )
+
+
+@router.post(
+    "/transaction/decrypt",
+    response_model=ResponseSchema,
+    response_model_exclude_none=True,
+)
+async def decrypt_file_by_signature(
+    signature, creds: HTTPAuthorizationCredentials = Security(JWTBearer())
+):
+    token = JWTRepo.extract_token(creds)
+    try:
+        result = await TangleService.decrypt_file_by_signature(signature, token["id"])
+        return ResponseSchema(detail="success", result=result)
+    except:
+        return ResponseSchema(
+            detail="error", result={"error": "Unable to decrypt the file."}
+        )
+
 
 @router.get(
     "/transactions/graph",
     response_model=ResponseSchema,
-    response_model_exclude_none=True
+    response_model_exclude_none=True,
 )
 async def get_graph(
     credentials: HTTPAuthorizationCredentials = Security(JWTBearer()),
@@ -72,6 +113,7 @@ async def get_graph(
     token = JWTRepo.extract_token(credentials)
     result = await TangleService.get_graphs(token["id"])
     return ResponseSchema(detail="success", result=result)
+
 
 @router.get(
     "/transaction/statistics",

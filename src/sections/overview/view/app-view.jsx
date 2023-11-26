@@ -30,13 +30,13 @@ export default function AppView() {
     const token = `${auth_token_type} ${auth_token}`;
 
 
-    axios.all([axios.get("http://localhost:5555/users/", {
+    axios.all([axios.get("http://localhost:8080/users/", {
       headers: { Authorization: token },
-    }), axios.get("http://localhost:5555/tangle/transaction/statistics", {
+    }), axios.get("http://localhost:8080/tangle/transaction/statistics", {
       headers: { Authorization: token }
-    }), axios.get("http://localhost:5555/tangle/transaction/user", {
+    }), axios.get("http://localhost:8080/tangle/transaction/user", {
       headers: { Authorization: token }
-    }), axios.get("http://localhost:5555/tangle/transactions/graph", {
+    }), axios.get("http://localhost:8080/tangle/transactions/graph", {
       headers: { Authorization: token }
     })]).then(axios.spread((res1, res2, res3, res4) => {
       console.log(res2)
@@ -101,12 +101,12 @@ export default function AppView() {
             chart={{
               labels: graphData.labels,
               series: [
-                {
-                  name: 'Send',
-                  type: 'column',
-                  fill: 'solid',
-                  data: graphData.transactions_sended_per_day,
-                },
+                // {
+                //   name: 'Send',
+                //   type: 'column',
+                //   fill: 'solid',
+                //   data: graphData.transactions_sended_per_day,
+                // },
                 {
                   name: 'Send',
                   type: 'area',
@@ -117,7 +117,7 @@ export default function AppView() {
                   name: 'Receive',
                   type: 'line',
                   fill: 'solid',
-                  data: [graphData.transactions_received_per_day],
+                  data: graphData.transactions_received_per_day,
                 },
               ],
             }}

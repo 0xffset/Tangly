@@ -31,6 +31,7 @@ def encrypt_file(input_file):
 
 def decrypt_file(input_file, file_extension):
     cipher = Fernet(KEY)
+    
     with open(input_file, "rb") as file:
         data = file.read()
     decrypted_data = cipher.decrypt(data)

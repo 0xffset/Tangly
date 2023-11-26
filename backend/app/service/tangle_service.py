@@ -13,7 +13,6 @@ import base64
 import hashlib
 import json
 from app.tangle.props import REQUIRED_PROOF, NUMBER_OF_VALIDATION_NODES
-from app.schema import TangleGetNodeDetailsSchema
 from app.tangle.cryptographics import decrypt_file, encrypt_file, get_hash_file
 
 HASH_NAME = "tangle"
@@ -26,30 +25,45 @@ class TangleService:
 
     @staticmethod
     async def get_tangle():
+        """'
+        Get the entire tangle network
+        """
         base64_str_tangle = redis_util.get_hash("tangle")
         tangle = base64_to_dict(base64_str_tangle)
         return tangle
 
     @staticmethod
     async def get_nodes():
+        """
+        Get the nodes of the tangle network
+        """
         base64_str_tangle = redis_util.get_hash("tangle")
         nodes = get_all_nodes(base64_str_tangle)
         return nodes
 
     @staticmethod
     async def get_peers():
+        """
+        Get the peers of the tangle network
+        """
         base64_str_tangle = redis_util.get_hash("tangle")
         peers = get_all_peers(base64_str_tangle)
         return peers
 
     @staticmethod
     async def get_node_detail(index):
+        """
+        Get the details of a node by index
+        """
         base64_str_tangle = redis_util.get_hash("tangle")
         nodes = get_all_nodes(base64_str_tangle)
         return next((item for item in nodes if item.get("index") == index), None)
 
     @staticmethod
     async def get_all_transactions_by_sender(sender):
+        """
+        Get all transactions by sender
+        """
         base64_str_tangle = redis_util.get_hash("tangle")
         nodes = get_all_nodes(base64_str_tangle)
         return list(
@@ -59,7 +73,49 @@ class TangleService:
         )
 
     @staticmethod
+    async def get_all_files_by_id(id):
+        base64_str_tangle = redis_util.get_hash("tangle")
+        nodes = get_all_nodes(base64_str_tangle)
+        data = list(
+            item
+            for item in nodes
+            if item["data"] is not None and item["data"]["sender"] == id
+        )
+        out_info = [
+            {
+                "signature": item["data"]["signature"],
+                "timestamp": item["timestamp"],
+                "file_extension": item["data"]["file_extension"],
+            }
+            for item in data
+        ]
+        output_info = sorted(out_info, key=lambda x: x["timestamp"], reverse=True)
+        return output_info
+
+    @staticmethod
+    async def decrypt_file_by_signature(signature, id):
+        """
+        Decrypte a file by signature and the user id
+        """
+        base64_str_tangle = redis_util.get_hash("tangle")
+        nodes = get_all_nodes(base64_str_tangle)
+        file = list(
+            item
+            for item in nodes
+            if item["data"] is not None
+            and item["data"]["signature"] == signature
+            and item["data"]["sender"] == id
+        )
+        encrypted_path = file[0]["data"]["file"]
+        encrypted_file_extension = file[0]["data"]["file_extension"]
+        path_file_decrypted = decrypt_file(encrypted_path, encrypted_file_extension)
+        return path_file_decrypted
+
+    @staticmethod
     async def get_all_transactions_user(id):
+        """
+        Get the last five most-recent transaction by id.
+        """
         base64_str_tangle = redis_util.get_hash("tangle")
         nodes = get_all_nodes(base64_str_tangle)
         # placeholder
@@ -94,6 +150,9 @@ class TangleService:
 
     @staticmethod
     async def get_graphs(id):
+        """
+        Get the data needed to plot the graph
+        """
         base64_str_tangle = redis_util.get_hash("tangle")
         nodes = get_all_nodes(base64_str_tangle)
         info_output = {
@@ -109,6 +168,7 @@ class TangleService:
             if item["data"] is not None
             and (item["data"]["sender"] == id or item["data"]["recipient"] == id)
         )
+
         transacations_sended_per_day = {}
         transacations_received_per_day = {}
         labels = set()
@@ -122,16 +182,20 @@ class TangleService:
                         transacations_received_per_day.get(formatted_date, 0) + 1
                     )
                 else:
-                    transacations_received_per_day[formatted_date] = 0
+                    transacations_received_per_day[formatted_date] = 1
             elif item["data"] is not None and item["data"]["sender"] == id:
                 if transacations_sended_per_day.get(formatted_date) != None:
                     transacations_sended_per_day[formatted_date] = (
                         transacations_sended_per_day.get(formatted_date, 0) + 1
                     )
                 else:
-                    transacations_sended_per_day[formatted_date] = 0
+                    transacations_sended_per_day[formatted_date] = 1
         recieved = []
         sended = []
+        print(transacations_received_per_day)
+        print("------")
+        print(transacations_sended_per_day)
+
         labels = list(labels)
         for i in range(len(labels)):
             if transacations_received_per_day.get(labels[i]) == None:
@@ -140,7 +204,7 @@ class TangleService:
                 recieved.append(transacations_received_per_day.get(labels[i]))
 
             if transacations_sended_per_day.get(labels[i]) == None:
-                recieved.append(0)
+                sended.append(0)
             else:
                 sended.append(transacations_sended_per_day.get(labels[i]))
 
@@ -197,7 +261,8 @@ class TangleService:
         # Save the file encrypted in a location
         values["signature"] = sha256_signature
         values["file"] = encrypted_path
-        TangleService.send_transaction(values)
+        result = TangleService.send_transaction(values)
+        return result
 
     @staticmethod
     def send_transaction(data):
@@ -326,11 +391,17 @@ class TangleService:
 
     @staticmethod
     def hash(node):
+        """
+        Creata a hash for a new node
+        """
         node_string = json.dumps(node, sort_keys=True).encode()
         return hashlib.sha256(node_string).hexdigest()
 
     @staticmethod
     def update_tangle(nodes):
+        """
+        Update the tangle network with a new node
+        """
         redis_util.delete_hash("tangle")
         data_dict = {"tangle": nodes}
         base64_dict = dict_to_base64(data_dict)
