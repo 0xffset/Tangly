@@ -7,9 +7,7 @@ from app.service.auth_service import generate_status_transactions
 from app.service.tangle_service import generate_tangle_template
 
 origins = ["http://localhost:3030", 
-           "https://tangly-569ljrsok-roleyder02.vercel.app", 
-           "https://tangly-2nwr1wk1q-roleyder02.vercel.app", 
-           "https://tangly.vercel.app/"]
+           "https://tangly.vercel.app"]
 
 
 def init_app():
@@ -47,4 +45,4 @@ app = init_app()
 
 def start():
     """Launched with 'poetry run start' at root level"""
-    uvicorn.run("app.main:app", host="localhost", port=8080, reload=True)
+    uvicorn.run("app.main:app", host="localhost", port=5555, reload=True)
