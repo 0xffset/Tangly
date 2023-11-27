@@ -1,17 +1,16 @@
 import { Helmet } from 'react-helmet-async';
 
-import { BlogView } from 'src/sections/blog/view';
-
+import SeeTangleView from 'src/sections/blog/view/see-tangle-view';
 // ----------------------------------------------------------------------
 
-export default function BlogPage() {
+export default function SeeTanglePage() {
   return (
     <>
       <Helmet>
-        <title> Blog | Minimal UI </title>
+        <title> Tangly | See Tangle </title>
       </Helmet>
 
-      <BlogView />
+      <SeeTangleView />
     </>
   );
 }

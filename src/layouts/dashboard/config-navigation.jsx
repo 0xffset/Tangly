@@ -24,18 +24,13 @@ const navConfig = [
   },
   {
     title: 'See Tangle',
-    path: '/blog',
+    path: '/tangle',
     icon: icon('ic_blog'),
   },
   {
     title: 'See Peers',
-    path: '/login',
+    path: '/peers',
     icon: icon('ic_lock'),
-  },
-  {
-    title: 'Not found',
-    path: '/404',
-    icon: icon('ic_disabled'),
   },
 ];
 

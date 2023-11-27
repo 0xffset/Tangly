@@ -62,11 +62,7 @@ export default function DecryptFileView() {
         setRowsPerPage(parseInt(event.target.value, 10));
     };
 
-    // const handleFilterByName = (event) => {
-    //     console.log(filterFileExtension)
-    //     setPage(0);
-    //     setFilterFileExtension(event.target.value);
-    // };
+  
 
     const dataFiltered = applyFilterSignature({
         inputData: filesData,
@@ -136,7 +132,7 @@ export default function DecryptFileView() {
             const data = {
                 signature: selected[0]
             }
-            axios.post(`http://localhost:8080/tangle/transaction/decrypt?signature=${data.signature}`, data, {
+            axios.post(`https://tangly-backend-ef31b7dafed0.herokuapp.com/tangle/transaction/decrypt?signature=${data.signature}`, data, {
                 headers: { Authorization: token }
             })
                 .then((res) => {
@@ -158,7 +154,7 @@ export default function DecryptFileView() {
         const auth_token = localStorage.getItem("auth_token");
         const auth_token_type = localStorage.getItem("auth_token_type");
         const token = `${auth_token_type} ${auth_token}`;
-        axios.get('http://localhost:8080/tangle/transactions/peers', {
+        axios.get('https://tangly-backend-ef31b7dafed0.herokuapp.com/tangle/transactions/peers', {
             headers: { Authorization: token },
         })
             .then((res) => {

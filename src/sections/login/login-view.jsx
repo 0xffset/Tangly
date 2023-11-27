@@ -45,7 +45,7 @@ export default function LoginView({handleLoginSubmit}) {
     }));
   };
   const handleClick = async () => {
-    await axios.post('http://localhost:8080/auth/login', {
+    await axios.post('https://tangly-backend-ef31b7dafed0.herokuapp.com/auth/login', {
       email: formValues.email,
       password: formValues.password
     })

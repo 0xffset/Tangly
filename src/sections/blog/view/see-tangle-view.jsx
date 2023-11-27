@@ -8,15 +8,18 @@ import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 
+
+
 // ----------------------------------------------------------------------
 
-export default function ProductsView() {
+
+export default function SeeTangleView() {
   const [tangle, setTangle] = useState([]);
   useEffect(() => {
     const auth_token = localStorage.getItem("auth_token");
     const auth_token_type = localStorage.getItem("auth_token_type");
     const token = `${auth_token_type} ${auth_token}`;
-    axios.get("https://tangly-backend-ef31b7dafed0.herokuapp.com/tangle/peers", {
+    axios.get("https://tangly-backend-ef31b7dafed0.herokuapp.com/tangle/", {
       headers: { Authorization: token },
     }).then((res) => {
       setTangle(res.data.result)
@@ -25,15 +28,22 @@ export default function ProductsView() {
   }, [])
   return (
     <Container>
-      <Typography variant="h4" sx={{ mb: 5 }}>
-        Peers
-      </Typography>
+      <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+        <Typography variant="h4">Tangle</Typography>
+
+        {/* <Button variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />}>
+          New Post
+        </Button> */}
+      </Stack>
+
       <Stack mb={5} direction="row" alignItems="center" justifyContent="space-between">
-        <JsonView src={JSON.parse(JSON.stringify(tangle))} collapsed={100}
-          
+        <JsonView src={JSON.parse(JSON.stringify(tangle))} collapsed={100} 
           collapseStringMode="word"
           collapseStringsAfterLength={10} theme="default" />
+
       </Stack>
+
+
     </Container>
   );
 }

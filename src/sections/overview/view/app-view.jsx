@@ -30,19 +30,15 @@ export default function AppView() {
     const token = `${auth_token_type} ${auth_token}`;
 
 
-    axios.all([axios.get("http://localhost:8080/users/", {
+    axios.all([axios.get("https://tangly-backend-ef31b7dafed0.herokuapp.com/users/", {
       headers: { Authorization: token },
-    }), axios.get("http://localhost:8080/tangle/transaction/statistics", {
+    }), axios.get("https://tangly-backend-ef31b7dafed0.herokuapp.com/tangle/transaction/statistics", {
       headers: { Authorization: token }
-    }), axios.get("http://localhost:8080/tangle/transaction/user", {
+    }), axios.get("https://tangly-backend-ef31b7dafed0.herokuapp.com/tangle/transaction/user", {
       headers: { Authorization: token }
-    }), axios.get("http://localhost:8080/tangle/transactions/graph", {
+    }), axios.get("https://tangly-backend-ef31b7dafed0.herokuapp.com/tangle/transactions/graph", {
       headers: { Authorization: token }
     })]).then(axios.spread((res1, res2, res3, res4) => {
-      console.log(res2)
-      console.log(res1)
-      console.log(res3)
-      console.log(res4.data.result.transactions_sended_per_day)
       setUser(res1.data.result)
       setStatistics(res2.data.result)
       setLastsTransactions(res3.data.result)

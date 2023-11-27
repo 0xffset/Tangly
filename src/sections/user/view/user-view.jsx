@@ -80,7 +80,6 @@ export default function UserPage() {
   }
 
   const handleClick = (event, name) => {
-    console.log(selected)
     const selectedIndex = selected.indexOf(name);
     let newSelected = [];
     if (selectedIndex === -1) {
@@ -95,7 +94,6 @@ export default function UserPage() {
         selected.slice(selectedIndex + 1)
       );
     }
-    console.log(newSelected)
     setTransactionData((prev) => ({
       ...prev,
       recipient: newSelected[0]
@@ -130,7 +128,7 @@ export default function UserPage() {
     const auth_token_type = localStorage.getItem("auth_token_type");
     const token = `${auth_token_type} ${auth_token}`;
 
-    axios.get("http://localhost:8080/users/all", {
+    axios.get("https://tangly-backend-ef31b7dafed0.herokuapp.com/users/all", {
       headers: { Authorization: token },
     })
       .then((res) => {
@@ -143,7 +141,7 @@ export default function UserPage() {
     const auth_token = localStorage.getItem("auth_token");
     const auth_token_type = localStorage.getItem("auth_token_type");
     const token = `${auth_token_type} ${auth_token}`;
-    const url = `http://localhost:8080/tangle/transaction/new?recipient=${transactionData.recipient}`;
+    const url = `https://tangly-backend-ef31b7dafed0.herokuapp.com/tangle/transaction/new?recipient=${transactionData.recipient}`;
     setLoading(true);
     const formData = new FormData();
     formData.append("recipient", transactionData.recipient);

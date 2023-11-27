@@ -22,7 +22,6 @@ export default function HorizontalLinearStepper({ id: ids, selected, handleIsVal
   const isStepSkipped = (step) => skipped.has(step);
 
   const handleNext = () => {
-    console.log(activeStep)
     let newSkipped = skipped;
     if (ids.length > 1) {
       setOpenAlert(true);

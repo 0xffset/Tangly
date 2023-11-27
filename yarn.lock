@@ -2748,6 +2748,11 @@ react-transition-group@^4.4.5:
   dependencies:
     loose-envify "^1.1.0"
 
+react18-json-view@^0.2.6:
+  version "0.2.6"
+  resolved "https://registry.npmjs.org/react18-json-view/-/react18-json-view-0.2.6.tgz"
+  integrity sha512-RHAY880UwC7SClyQBoij50q2InpSrj5zmP2DCL73vEaaVTyj/QbMPBk4FRKMQ7LF8FSxhh+VI6mK3AhlBaCBxw==
+
 readdirp@~3.6.0:
   version "3.6.0"
   resolved "https://registry.npmjs.org/readdirp/-/readdirp-3.6.0.tgz"

@@ -8,7 +8,7 @@ import PrivateRouter from 'src/sections/privateRouter/privateRouter';
 import PrivateRouterLoginRegister from 'src/sections/privateRouter/PrivateRouterLoginRegister';
 
 export const IndexPage = lazy(() => import('src/pages/app'));
-export const BlogPage = lazy(() => import('src/pages/blog'));
+export const SeeTanglePage = lazy(() => import('src/pages/seeTangle'));
 export const UserPage = lazy(() => import('src/pages/user'));
 export const LoginPage = lazy(() => import('src/pages/login'));
 export const ProductsPage = lazy(() => import('src/pages/products'));
@@ -36,8 +36,8 @@ export default function Router({ isAuthenticated, user, handleLoginSubmit  }) {
           , index: true
         },
         { path: 'user', element: <PrivateRouter component={<UserPage />} isAuthenticated={isAuthenticated} /> },
-        { path: 'products', element: <PrivateRouter component={<ProductsPage isAuthenticated={isAuthenticated} />} /> },
-        { path: 'blog', element: <PrivateRouter component={<BlogPage />} isAuthenticated={isAuthenticated} /> },
+        { path: 'peers', element: <PrivateRouter component={<ProductsPage />}  isAuthenticated={isAuthenticated} /> },
+        { path: 'tangle', element: <PrivateRouter component={<SeeTanglePage />} isAuthenticated={isAuthenticated} /> },
         { path: 'decrypt', element: <PrivateRouter component={<DecryptFilePage />} isAuthenticated={isAuthenticated} /> },
       ],
     },

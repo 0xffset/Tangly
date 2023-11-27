@@ -21,6 +21,7 @@ redis = "^5.0.1"
 python-dotenv = "^1.0.0"
 aioredis = "2.0.0"
 python-multipart = "^0.0.6"
+gunicorn = "^21.2.0"
 
 
 [build-system]

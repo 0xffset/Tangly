@@ -1,6 +1,6 @@
 
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import Router from 'src/routes/sections';
 
@@ -16,7 +16,7 @@ export default function App() {
   useScrollToTop();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState({});
-  const [loginSubmitFlag, setLoginSubmitFlag] = useState(false); // New state variable
+  const [loginSubmitFlag, setLoginSubmitFlag] = useState(true); // New state variable
 
   const handleLoginSubmit = () => {
     // Perform login actions
@@ -28,15 +28,12 @@ export default function App() {
       const auth_token = localStorage.getItem("auth_token");
       const auth_token_type = localStorage.getItem("auth_token_type");
       const token = `${auth_token_type} ${auth_token}`;
-
-      console.log(isAuthenticated)
-
       if (!token) {
         setIsAuthenticated(false);
         setLoginSubmitFlag(false);
         return;
       }
-      axios.get("http://localhost:8080/users/", {
+      axios.get("https://tangly-backend-ef31b7dafed0.herokuapp.com/users/", {
         headers: { Authorization: token },
       })
         .then((response) => {
