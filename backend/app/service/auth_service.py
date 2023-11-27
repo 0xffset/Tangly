@@ -2,6 +2,7 @@ import base64
 from datetime import datetime
 from uuid import uuid4
 from fastapi import HTTPException
+from jose import ExpiredSignatureError
 import requests
 from passlib.context import CryptContext
 from app.schema import RegisterSchema
@@ -52,20 +53,28 @@ class AuthService:
     async def logins_service(login: LoginSchema):
         _user = await UsersRepository.find_by_email(login.email)
 
-        if _user is not None:
-            if not pwd_context.verify(login.password, _user.password):
-                raise HTTPException(status_code=400, detail="Invalid password")
-            return JWTRepo(data={"email": _user.email,"id": _user.id}).generate_token()
-        raise HTTPException(status_code=404, detail="User not found")
+        try:
+            if _user is not None:
+                if not pwd_context.verify(login.password, _user.password):
+                    raise HTTPException(status_code=400, detail="Invalid password")
+                return JWTRepo(
+                    data={"email": _user.email, "id": _user.id}
+                ).generate_token()
+            raise HTTPException(status_code=404, detail="User not found")
+        except ExpiredSignatureError:
+            raise HTTPException(status_code=403, detail="Token has been expired")
 
     @staticmethod
     async def forgot_password_service(forgot_password: ForgotPasswordSchema):
         _email = await UsersRepository.find_by_email(forgot_password.email)
-        if _email is None:
-            raise HTTPException(status_code=404, detail="Email not found")
-        await UsersRepository.update_password(
-            forgot_password.email, pwd_context.hash(forgot_password.new_password)
-        )
+        try:
+            if _email is None:
+                raise HTTPException(status_code=404, detail="Email not found")
+            await UsersRepository.update_password(
+                forgot_password.email, pwd_context.hash(forgot_password.new_password)
+            )
+        except ExpiredSignatureError:
+            raise HTTPException(status_code=403, detial="Token has been expired")
 
 
 """

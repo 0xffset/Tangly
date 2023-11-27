@@ -18,11 +18,12 @@ export const Page404 = lazy(() => import('src/pages/page-not-found'));
 
 // ----------------------------------------------------------------------
 
-export default function Router() {
+export default function Router({ isAuthenticated, user, handleLoginSubmit  }) {
+
   const routes = useRoutes([
     {
       element: (
-        <DashboardLayout>
+        <DashboardLayout user={user}>
           <Suspense>
             <Outlet />
           </Suspense>
@@ -31,18 +32,18 @@ export default function Router() {
       children: [
         {
           element:
-            <PrivateRouter children={<IndexPage />} />
+            <PrivateRouter component={<IndexPage />} isAuthenticated={isAuthenticated} />
           , index: true
         },
-        { path: 'user', element: <PrivateRouter children={<UserPage />} /> },
-        { path: 'products', element: <PrivateRouter children={<ProductsPage />} /> },
-        { path: 'blog', element: <PrivateRouter children={<BlogPage />} /> },
-        {path: 'decrypt', element: <PrivateRouter children={<DecryptFilePage/>} />},
+        { path: 'user', element: <PrivateRouter component={<UserPage />} isAuthenticated={isAuthenticated} /> },
+        { path: 'products', element: <PrivateRouter component={<ProductsPage isAuthenticated={isAuthenticated} />} /> },
+        { path: 'blog', element: <PrivateRouter component={<BlogPage />} isAuthenticated={isAuthenticated} /> },
+        { path: 'decrypt', element: <PrivateRouter component={<DecryptFilePage />} isAuthenticated={isAuthenticated} /> },
       ],
     },
     {
       path: 'register',
-      element: <PrivateRouterLoginRegister children={<RegisterPage />} />
+      element: <PrivateRouterLoginRegister component={<RegisterPage />} isAuthenticated={isAuthenticated} />
     },
     {
       path: 'home',
@@ -50,7 +51,7 @@ export default function Router() {
     },
     {
       path: 'login',
-      element: <PrivateRouterLoginRegister children={<LoginPage />} />
+      element: <PrivateRouterLoginRegister component={<LoginPage handleLoginSubmit={handleLoginSubmit} />} isAuthenticated={isAuthenticated} />
 
     },
     {

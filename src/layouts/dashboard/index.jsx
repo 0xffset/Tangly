@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 
@@ -9,12 +10,12 @@ import Header from './header';
 
 // ----------------------------------------------------------------------
 
-export default function DashboardLayout({ children }) {
+export default function DashboardLayout({ children, user }) {
   const [openNav, setOpenNav] = useState(false);
 
   return (
     <>
-      <Header onOpenNav={() => setOpenNav(true)} />
+      <Header onOpenNav={() => setOpenNav(true)} user={user} />
 
       <Box
         sx={{
@@ -23,7 +24,7 @@ export default function DashboardLayout({ children }) {
           flexDirection: { xs: 'column', lg: 'row' },
         }}
       >
-        <Nav openNav={openNav} onCloseNav={() => setOpenNav(false)} />
+        <Nav openNav={openNav} onCloseNav={() => setOpenNav(false)} user={user} />
 
         <Main>{children}</Main>
       </Box>

@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from typing import Optional
-from jose import jwt
+from jose import ExpiredSignatureError, jwt
 
 from fastapi import Request, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
@@ -54,15 +54,25 @@ class JWTBearer(HTTPBearer):
                         "message": "Invalid authentication schema.",
                     },
                 )
-            if not self.verify_jwt(credentials.credentials):
+            try:
+                if not self.verify_jwt(credentials.credentials):
+                    raise HTTPException(
+                        status_code=403,
+                        detail={
+                            "status": "Forbidden",
+                            "message": "Invalid token or expired token.",
+                        },
+                    )
+                return credentials.credentials
+            except ExpiredSignatureError:
                 raise HTTPException(
                     status_code=403,
                     detail={
-                        "status": "Forbidden",
-                        "message": "Invalid token or expired token.",
+                        "status": "Forbbiden",
+                        "message": "Token has been expired.",
                     },
                 )
-            return credentials.credentials
+
         else:
             raise HTTPException(
                 status_code=403,

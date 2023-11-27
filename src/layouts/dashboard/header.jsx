@@ -1,6 +1,5 @@
-import axios from 'axios';
+/* eslint-disable react/prop-types */
 import PropTypes from 'prop-types';
-import { useState, useEffect } from 'react';
 
 import { Box } from '@mui/material';
 import Stack from '@mui/material/Stack';
@@ -8,8 +7,6 @@ import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import { useTheme } from '@mui/material/styles';
 import IconButton from '@mui/material/IconButton';
-
-import { useRouter } from 'src/routes/hooks';
 
 import { useResponsive } from 'src/hooks/use-responsive';
 
@@ -25,28 +22,12 @@ import AccountPopover from './common/account-popover';
 
 // ----------------------------------------------------------------------
 
-export default function Header({ onOpenNav }) {
+export default function Header({ onOpenNav, user }) {
   const theme = useTheme();
-  const router = useRouter();
 
   const lgUp = useResponsive('up', 'lg');
-  const [user, setUser] = useState({});
 
-  useEffect(() => {
-    const auth_token = localStorage.getItem("auth_token");
-    const auth_token_type = localStorage.getItem("auth_token_type");
-    const token = `${auth_token_type} ${auth_token}`;
 
-    axios.get("http://localhost:8080/users/", {
-      headers: { Authorization: token },
-    })
-      .then((response) => {
-        setUser(response.data.result);
-      })
-      .catch((error) => {
-        console.log(error);
-      }, [])
-  }, [router])
   const renderContent = (
     <>
       {!lgUp && (

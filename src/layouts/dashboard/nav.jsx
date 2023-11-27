@@ -1,8 +1,8 @@
-import axios from 'axios';
+/* eslint-disable react/prop-types */
+import { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { useState, useEffect } from 'react';
 
-import {Box } from '@mui/material';
+import { Box } from '@mui/material';
 import Stack from '@mui/material/Stack';
 import Drawer from '@mui/material/Drawer';
 import Button from '@mui/material/Button';
@@ -26,30 +26,14 @@ import navConfig from './config-navigation';
 
 // ----------------------------------------------------------------------
 
-export default function Nav({ openNav, onCloseNav }) {
+export default function Nav({ openNav, onCloseNav, user }) {
   const pathname = usePathname();
-  const [user, setUser] = useState({});
-
   const upLg = useResponsive('up', 'lg');
 
   useEffect(() => {
     if (openNav) {
       onCloseNav();
     }
-    const auth_token = localStorage.getItem("auth_token");
-    const auth_token_type = localStorage.getItem("auth_token_type");
-    const token = `${auth_token_type} ${auth_token}`;
-
-    axios.get("http://localhost:8080/users/", {
-      headers: { Authorization: token },
-    })
-      .then((response) => {
-        setUser(response.data.result);
-      })
-      .catch((error) => {
-        console.log(error);
-      }, [])
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 
@@ -99,7 +83,7 @@ export default function Nav({ openNav, onCloseNav }) {
           <Typography variant="h6">Tangly</Typography>
 
           <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1 }}>
-          PoC Tangle Networking
+            PoC Tangle Networking
           </Typography>
         </Box>
 

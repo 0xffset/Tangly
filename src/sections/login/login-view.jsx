@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import axios from 'axios';
 import { useState } from 'react';
 
@@ -24,7 +25,7 @@ import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
-export default function LoginView() {
+export default function LoginView({handleLoginSubmit}) {
   const theme = useTheme();
 
   const router = useRouter();
@@ -52,6 +53,7 @@ export default function LoginView() {
         if (res.status === 200) {
           localStorage.setItem("auth_token", res.data.result.access_token);
           localStorage.setItem("auth_token_type", res.data.result.token_type);
+          handleLoginSubmit();
           router.push('/');
         }
       })
