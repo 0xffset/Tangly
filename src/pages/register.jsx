@@ -8,7 +8,7 @@ export default function RegisterPage() {
   return (
     <>
       <Helmet>
-        <title> Tangly | Registrarse </title>
+        <title> Tangly | Register </title>
       </Helmet>
 
       <RegisterView />

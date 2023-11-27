@@ -9,7 +9,7 @@ export default function LoginPage({handleLoginSubmit}) {
   return (
     <>
       <Helmet>
-        <title> Tangly | Iniciar </title>
+        <title> Tangly | Login </title>
       </Helmet>
 
       <LoginView handleLoginSubmit={handleLoginSubmit} />
