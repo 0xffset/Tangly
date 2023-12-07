@@ -39,7 +39,7 @@ export default function UserPage() {
   const [orderBy, setOrderBy] = useState('name');
 
   const [filterName, setFilterName] = useState('');
-
+ 
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [userData, setUserData] = useState([]);
   const [isValidStep2, SetIsValidStep2] = useState(false);
@@ -229,7 +229,7 @@ export default function UserPage() {
               ]}
             />
             <TableBody>
-              {userData
+              {dataFiltered
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => (
                   <UserTableRow

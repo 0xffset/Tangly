@@ -14,6 +14,7 @@ import hashlib
 import json
 from app.tangle.props import REQUIRED_PROOF, NUMBER_OF_VALIDATION_NODES
 from app.tangle.cryptographics import decrypt_file, encrypt_file, get_hash_file
+import os
 
 HASH_NAME = "tangle"
 
@@ -79,7 +80,7 @@ class TangleService:
         data = list(
             item
             for item in nodes
-            if item["data"] is not None and item["data"]["sender"] == id
+            if item["data"] is not None and item["data"]["recipient"] == id
         )
         out_info = [
             {
@@ -104,8 +105,9 @@ class TangleService:
             for item in nodes
             if item["data"] is not None
             and item["data"]["signature"] == signature
-            and item["data"]["sender"] == id
+            and item["data"]["recipient"] == id
         )
+        print(file)
         encrypted_path = file[0]["data"]["file"]
         encrypted_file_extension = file[0]["data"]["file_extension"]
         path_file_decrypted = decrypt_file(encrypted_path, encrypted_file_extension)
@@ -251,9 +253,12 @@ class TangleService:
         TangleService.resolve_conflicts()
 
         values = {"sender": sender, "recipient": recipient}
+        # Get information about the file
         # Get the file extension
-        file_extension = "." + file.filename.split(".")[1]
+        file_extension = os.path.splitext(file.filename)[1]
         values["file_extension"] = file_extension
+        values["file_name"] = file.filename
+        values["content_type"] = file.content_type
         # Encrypt the file
         encrypted_path = encrypt_file(file)
         # Get the signature

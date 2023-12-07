@@ -3,7 +3,10 @@ from sqlalchemy.orm import sessionmaker
 from sqlmodel import SQLModel
 
 DB_CONFIG_DEV = f"postgresql+asyncpg://postgres:3301:postgres@localhost:5433/tangly"
-DB_CONFIG_DEPLOY = f"postgresql+asyncpg://ringxqzpvehcke:cb2658792e66350418be840699a481ed9dc15fe04d8c9dfb55fc6b89ac2ce1da@ec2-3-210-173-88.compute-1.amazonaws.com:5432/d20o9huq2ra7ja"
+DB_CONFIG_DEPLOY = f"postgresql+asyncpg://csacrdydphgnpr:f28fe4c8a0029d8ddca59cb922176a3d5c7610a1325f5b4776180586b9e11e52@ec2-44-213-228-107.compute-1.amazonaws.com:5432/ddn84o9rkbqlha"
+DB_CONFIG_DEPLOY_AZURE = f"postgresql+asyncpg://tangly:OvBOUB1jZ%Ixr^dU@tangly-db.postgres.database.azure.com:5432/postgres"
+
+
 
 SECRET_KEY = "hHQE8&R<+lbQ:y}"
 ALGORITHM = "HS256"
@@ -19,7 +22,7 @@ class AsyncDatabaseSession:
         return getattr(self.session, name)
 
     def init(self):
-        self.engine = create_async_engine(DB_CONFIG_DEPLOY, future=True, echo=True)
+        self.engine = create_async_engine(DB_CONFIG_DEPLOY_AZURE, future=True, echo=True)
         self.session = sessionmaker(
             self.engine, expire_on_commit=False, class_=AsyncSession
         )()
