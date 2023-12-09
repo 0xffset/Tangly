@@ -127,18 +127,18 @@ export default function RegisterView() {
   const submitRegister = async () => {
     // Validate FirstName
     if (formValues.first_name.trim() === '') {
-      setIsValidFirstName([false, 'El nombre no puede estar vacío.']);
+      setIsValidFirstName([false, 'First name is empty.']);
     } else if (formValues.first_name.trim().length < 6) {
-      setIsValidFirstName([false, 'El nombre debe tener al menos 6 caracteres.']);
+      setIsValidFirstName([false, 'The first name must have a least 6 characters.']);
     } else {
       setIsValidFirstName(initialValidationState);
     }
 
     // Validate Email
     if (formValues.email.trim() === '') {
-      setIsValidEmail([false, 'El correo no puede estar vacío']);
+      setIsValidEmail([false, 'Email is empty.']);
     } else if (!checkEmail(formValues.email.trim())) {
-      setIsValidEmail([false, 'El correo no es válido']);
+      setIsValidEmail([false, 'Email is not valid.']);
     } else {
       setIsValidEmail(initialValidationState);
     }

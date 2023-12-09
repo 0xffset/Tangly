@@ -6,6 +6,7 @@ import DashboardLayout from 'src/layouts/dashboard';
 
 import PrivateRouter from 'src/sections/privateRouter/privateRouter';
 import PrivateRouterLoginRegister from 'src/sections/privateRouter/PrivateRouterLoginRegister';
+import UpdateProfilePage from 'src/pages/update-profile';
 
 export const IndexPage = lazy(() => import('src/pages/app'));
 export const SeeTanglePage = lazy(() => import('src/pages/seeTangle'));
@@ -18,7 +19,7 @@ export const Page404 = lazy(() => import('src/pages/page-not-found'));
 
 // ----------------------------------------------------------------------
 
-export default function Router({ isAuthenticated, user, handleLoginSubmit  }) {
+export default function Router({ isAuthenticated, user, handleLoginSubmit }) {
 
   const routes = useRoutes([
     {
@@ -36,9 +37,10 @@ export default function Router({ isAuthenticated, user, handleLoginSubmit  }) {
           , index: true
         },
         { path: 'user', element: <PrivateRouter component={<UserPage />} isAuthenticated={isAuthenticated} /> },
-        { path: 'peers', element: <PrivateRouter component={<ProductsPage />}  isAuthenticated={isAuthenticated} /> },
+        { path: 'peers', element: <PrivateRouter component={<ProductsPage />} isAuthenticated={isAuthenticated} /> },
         { path: 'tangle', element: <PrivateRouter component={<SeeTanglePage />} isAuthenticated={isAuthenticated} /> },
         { path: 'decrypt', element: <PrivateRouter component={<DecryptFilePage />} isAuthenticated={isAuthenticated} /> },
+        { path: 'profile', element: <UpdateProfilePage/> }
       ],
     },
     {
