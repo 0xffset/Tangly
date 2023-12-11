@@ -1,5 +1,7 @@
 import axios from 'axios';
 import { faker } from '@faker-js/faker';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import ReactLoading from 'react-loading';
 import { useState, useEffect } from 'react';
 
 import Container from '@mui/material/Container';
@@ -12,6 +14,7 @@ import AppNewsUpdate from '../app-news-update';
 import AppOrderTimeline from '../app-order-timeline';
 import AppWebsiteVisits from '../app-website-visits';
 import AppWidgetSummary from '../app-widget-summary';
+
 // ----------------------------------------------------------------------
 
 
@@ -23,6 +26,7 @@ export default function AppView() {
   const [statistics, setStatistics] = useState({});
   const [lastsTransactions, setLastsTransactions] = useState([]);
   const [graphData, setGraphData] = useState([])
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const auth_token = localStorage.getItem("auth_token");
@@ -30,58 +34,67 @@ export default function AppView() {
     const token = `${auth_token_type} ${auth_token}`;
 
 
-    axios.all([axios.get("https://tangly-backend-ef31b7dafed0.herokuapp.com/users/", {
+    axios.all([axios.get("http://localhost:4444/users/", {
       headers: { Authorization: token },
-    }), axios.get("https://tangly-backend-ef31b7dafed0.herokuapp.com/tangle/transaction/statistics", {
+    }), axios.get("http://localhost:4444/tangle/transaction/statistics", {
       headers: { Authorization: token }
-    }), axios.get("https://tangly-backend-ef31b7dafed0.herokuapp.com/tangle/transaction/user", {
+    }), axios.get("http://localhost:4444/tangle/transaction/user", {
       headers: { Authorization: token }
-    }), axios.get("https://tangly-backend-ef31b7dafed0.herokuapp.com/tangle/transactions/graph", {
+    }), axios.get("http://localhost:4444/tangle/transactions/graph", {
       headers: { Authorization: token }
     })]).then(axios.spread((res1, res2, res3, res4) => {
       setUser(res1.data.result)
       setStatistics(res2.data.result)
       setLastsTransactions(res3.data.result)
       setGraphData(res4.data.result)
+      setIsLoading(false);
     }))
   }, []);
 
 
   return (
-    <Container maxWidth="xl">
-      <Typography variant="h4" sx={{ mb: 5 }}>
-        Hi, Welcome back {`${user.first_name} ${user.last_name}`} 👋
-      </Typography>
+    isLoading ? <Grid container
+      spacing={0}
+      direction="column"
+      alignItems="center"
+      justifyContent="center">
+      <ReactLoading type="spin" color='black' height='50px' width='50px' />
+    </Grid>
+      :
+      <Container maxWidth="xl">
+        <Typography variant="h4" sx={{ mb: 5 }}>
+          Hi, Welcome back {`${user.first_name} ${user.last_name}`} 👋
+        </Typography>
 
-      <Grid container spacing={3}>
-        <Grid xs={12} sm={6} md={3}>
-          <AppWidgetSummary
-            title="Transations Sended"
-            total={statistics.total_sended_transactions}
-            color="success"
-            icon={<img alt="icon" src="/assets/icons/glass/ic_glass_bag.png" />}
-          />
-        </Grid>
+        <Grid container spacing={3}>
+          <Grid xs={12} sm={6} md={3}>
+            <AppWidgetSummary
+              title="Transations Sended"
+              total={statistics.total_sended_transactions}
+              color="success"
+              icon={<img alt="icon" src="/assets/icons/glass/ic_glass_bag.png" />}
+            />
+          </Grid>
 
-        <Grid xs={12} sm={6} md={3}>
-          <AppWidgetSummary
-            title="Transactions Received"
-            total={statistics.total_received_transactions}
-            color="info"
-            icon={<img alt="icon" src="/assets/icons/glass/ic_glass_users.png" />}
-          />
-        </Grid>
+          <Grid xs={12} sm={6} md={3}>
+            <AppWidgetSummary
+              title="Transactions Received"
+              total={statistics.total_received_transactions}
+              color="info"
+              icon={<img alt="icon" src="/assets/icons/glass/ic_glass_users.png" />}
+            />
+          </Grid>
 
-        <Grid xs={12} sm={6} md={3}>
-          <AppWidgetSummary
-            title="Total Transactions"
-            total={statistics.total_transactions}
-            color="warning"
-            icon={<img alt="icon" src="/assets/icons/glass/ic_glass_buy.png" />}
-          />
-        </Grid>
+          <Grid xs={12} sm={6} md={3}>
+            <AppWidgetSummary
+              title="Total Transactions"
+              total={statistics.total_transactions}
+              color="warning"
+              icon={<img alt="icon" src="/assets/icons/glass/ic_glass_buy.png" />}
+            />
+          </Grid>
 
-        {/* <Grid xs={12} sm={6} md={3}>
+          {/* <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
             title="Networkign Status"
             total={234}
@@ -90,37 +103,37 @@ export default function AppView() {
           />
         </Grid> */}
 
-        <Grid xs={12} md={6} lg={8}>
-          <AppWebsiteVisits
-            title="Graph's Transaction"
-            subheader="Transactions send/recieve per day"
-            chart={{
-              labels: graphData.labels,
-              series: [
-                // {
-                //   name: 'Send',
-                //   type: 'column',
-                //   fill: 'solid',
-                //   data: graphData.transactions_sended_per_day,
-                // },
-                {
-                  name: 'Send',
-                  type: 'area',
-                  fill: 'gradient',
-                  data: graphData.transactions_sended_per_day,
-                },
-                {
-                  name: 'Receive',
-                  type: 'line',
-                  fill: 'solid',
-                  data: graphData.transactions_received_per_day,
-                },
-              ],
-            }}
-          />
-        </Grid>
+          <Grid xs={15} md={6} lg={10}>
+            <AppWebsiteVisits
+              title="Graph's Transaction"
+              subheader="Transactions send/recieve per day"
+              chart={{
+                labels: graphData.labels,
+                series: [
+                  // {
+                  //   name: 'Send',
+                  //   type: 'column',
+                  //   fill: 'solid',
+                  //   data: graphData.transactions_sended_per_day,
+                  // },
+                  {
+                    name: 'Send',
+                    type: 'area',
+                    fill: 'gradient',
+                    data: graphData.transactions_sended_per_day,
+                  },
+                  {
+                    name: 'Receive',
+                    type: 'line',
+                    fill: 'solid',
+                    data: graphData.transactions_received_per_day,
+                  },
+                ],
+              }}
+            />
+          </Grid>
 
-        {/* <Grid xs={12} md={6} lg={4}>
+          {/* <Grid xs={12} md={6} lg={4}>
           <AppCurrentVisits
             title="Current Visits"
             chart={{
@@ -134,7 +147,7 @@ export default function AppView() {
           />
         </Grid> */}
 
-        {/* <Grid xs={12} md={6} lg={8}>
+          {/* <Grid xs={12} md={6} lg={8}>
           <AppConversionRates
             title="Conversion Rates"
             subheader="(+43%) than last year"
@@ -155,7 +168,7 @@ export default function AppView() {
           />
         </Grid> */}
 
-        {/* <Grid xs={12} md={6} lg={4}>
+          {/* <Grid xs={12} md={6} lg={4}>
           <AppCurrentSubject
             title="Current Subject"
             chart={{
@@ -169,7 +182,7 @@ export default function AppView() {
           />
         </Grid> */}
 
-        {/* <Grid xs={12} md={6} lg={8}>
+          {/* <Grid xs={12} md={6} lg={8}>
           <AppNewsUpdate
             title="Last Transactions"
             list={[...Array(5)].map((_, index) => ({
@@ -182,31 +195,31 @@ export default function AppView() {
           />
         </Grid> */}
 
-        <Grid xs={12} md={6} lg={8}>
-          <AppNewsUpdate
-            title="Last Transactions"
-            list={lastsTransactions.map((value, index) => ({
-              id: faker.string.uuid(),
-              title: value.type === "sender" ? "Transaction Sended" : "Transaction Received",
-              description: value.type === "sender" ? `You send a transaction to ${value.recipient}` : `You received a transaction from ${value.sender}`,
-              image: value.type === "sender" ? "/assets/icons/sender-icon.png" : "/assets/icons/recipient-icon.png",
-              postedAt: fTimestampToDate(value.timestamp),
-            }))}
-          />
-        </Grid>
+          <Grid xs={12} md={6} lg={8}>
+            <AppNewsUpdate
+              title="Last Transactions"
+              list={lastsTransactions.map((value, index) => ({
+                id: faker.string.uuid(),
+                title: value.type === "sender" ? "Transaction Sended" : "Transaction Received",
+                description: value.type === "sender" ? `You send a transaction to ${value.recipient}` : `You received a transaction from ${value.sender}`,
+                image: value.type === "sender" ? "/assets/icons/sender-icon.png" : "/assets/icons/recipient-icon.png",
+                postedAt: fTimestampToDate(value.timestamp),
+              }))}
+            />
+          </Grid>
 
-        <Grid xs={12} md={6} lg={4}>
-          <AppOrderTimeline
-            title="Last Transactions Timeline"
-            list={lastsTransactions.map((value, index) => ({
-              id: faker.string.uuid(),
-              title: lastsTransactions.map((i) => i.type === "sender" ? `Send to ${i.recipient}` : `Receive from ${i.sender}`)[index],
-              type: `order${index + 1}`,
-              time: fTimestampToDate(value.timestamp),
-            }))}
-          />
+          <Grid xs={12} md={6} lg={4}>
+            <AppOrderTimeline
+              title="Last Transactions Timeline"
+              list={lastsTransactions.map((value, index) => ({
+                id: faker.string.uuid(),
+                title: lastsTransactions.map((i) => i.type === "sender" ? `Send to ${i.recipient}` : `Receive from ${i.sender}`)[index],
+                type: `order${index + 1}`,
+                time: fTimestampToDate(value.timestamp),
+              }))}
+            />
+          </Grid>
         </Grid>
-      </Grid>
-    </Container>
+      </Container>
   );
 }

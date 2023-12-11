@@ -220,3 +220,24 @@ async def get_node_details(request_body: TangleGetNodeDetailsSchema):
         return ResponseSchema(
             detail="error", result={"error": "Unable to get node details"}
         )
+
+
+@router.post(
+    "/transactions/file/details",
+    response_model=ResponseSchema,
+    response_model_exclude_none=True,
+)
+async def get_file_detail(request_body: TangleGetNodeDetailsSchema,  
+                          credentials: HTTPAuthorizationCredentials = Security(JWTBearer())):
+    try:
+        token = JWTRepo.extract_token(credentials)
+        result = await TangleService.get_file_detail(request_body.index, token["id"])
+        return ResponseSchema(detail="success", result=result)
+    except ExpiredSignatureError:
+        return ResponseSchema(
+            detail="error", result={"error": "Token has been expired"}
+        )
+    except:
+        return ResponseSchema(
+            detail="error", result={"error": "Unable to get file details"}
+        )

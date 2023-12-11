@@ -60,6 +60,26 @@ class TangleService:
         nodes = get_all_nodes(base64_str_tangle)
         return next((item for item in nodes if item.get("index") == index), None)
 
+    staticmethod
+
+    async def get_file_detail(index, id):
+        """
+        Get the deatils of a file by index
+        """
+        base64_str_tangle = redis_util.get_hash("tangle")
+        nodes = get_all_nodes(base64_str_tangle)
+        file = next((item for item in nodes if item["index"] == index and item["data"]["recipient"] == id), None)
+        if file is None:
+            return "Unable to fetch the file details or you do not have access."
+        output = {
+            "sender": file["data"]["sender"],
+            "file_extension": file["data"]["file_extension"],
+            "content_type": file["data"]["content_type"],
+            "signature": file["data"]["signature"],
+            "upload": file["timestamp"],
+        }
+        return output
+
     @staticmethod
     async def get_all_transactions_by_sender(sender):
         """
@@ -84,6 +104,7 @@ class TangleService:
         )
         out_info = [
             {
+                "index": item["index"],
                 "signature": item["data"]["signature"],
                 "timestamp": item["timestamp"],
                 "file_extension": item["data"]["file_extension"],

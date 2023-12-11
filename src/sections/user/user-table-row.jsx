@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 
@@ -11,7 +12,10 @@ import TableCell from '@mui/material/TableCell';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 
+import { fTimestampToDate } from 'src/utils/format-time';
+
 import Iconify from 'src/components/iconify';
+import ModalFileDetails from 'src/components/modal/modal';
 
 // ----------------------------------------------------------------------
 
@@ -26,21 +30,63 @@ export default function UserTableRow({
   handleClick,
   first_name,
   last_name,
-  email, 
-  image
+  email,
+  image,
+  index
 }) {
   const [open, setOpen] = useState(null);
+  const [openModal, setOpenModal] = useState(false);
+  const [dataDetails, setDataDetails] = useState({
+    'signature': '',
+    'extension': '',
+    'sender': '',
+    'content_type': '',
+    'upload_at': ''
 
+  });
   const handleOpenMenu = (event) => {
     setOpen(event.currentTarget);
   };
 
+  const handleSeeFileDetails = () => {
+    const auth_token = localStorage.getItem("auth_token");
+    const auth_token_type = localStorage.getItem("auth_token_type");
+    const token = `${auth_token_type} ${auth_token}`;
+    const data = {
+      index
+    }
+    axios.post("http://localhost:4444/tangle/transactions/file/details", data, {
+      headers: { Authorization: token }
+    }).then((res) => {
+
+      setDataDetails({
+        signature: res.data.result.signature,
+        extension: res.data.result.file_extension,
+        sender: res.data.result.sender,
+        content_type: res.data.result.content_type,
+        upload_at: res.data.result.upload
+      })
+      setOpenModal(true)
+    })
+      .catch((err) => {
+        console.error(err)
+      })
+    setOpen(null);
+  }
+
+  const handleCloseModal = () => {
+    setOpenModal(false)
+  }
   const handleCloseMenu = () => {
     setOpen(null);
   };
 
   return (
     <>
+      <ModalFileDetails openModal={openModal} onCloseModal={handleCloseModal} sender={dataDetails.sender}
+        extension={dataDetails.extension}
+        content_type={dataDetails.content_type} signature={dataDetails.signature} upload_time={fTimestampToDate(dataDetails.upload_at).toDateString()}
+      />
       <TableRow hover tabIndex={-1} role="checkbox" selected={selected}>
         <TableCell padding="checkbox">
           <Checkbox disableRipple checked={selected} onChange={handleClick} />
@@ -77,7 +123,7 @@ export default function UserTableRow({
           sx: { width: 140 },
         }}
       >
-        <MenuItem onClick={handleCloseMenu}>
+        <MenuItem onClick={handleSeeFileDetails}>
           <Iconify icon="eva:edit-fill" sx={{ mr: 2 }} />
           Details
         </MenuItem>
@@ -99,4 +145,5 @@ UserTableRow.propTypes = {
   role: PropTypes.any,
   selected: PropTypes.any,
   status: PropTypes.string,
+  index: PropTypes.any
 };

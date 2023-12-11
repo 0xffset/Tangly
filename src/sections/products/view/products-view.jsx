@@ -16,7 +16,7 @@ export default function ProductsView() {
     const auth_token = localStorage.getItem("auth_token");
     const auth_token_type = localStorage.getItem("auth_token_type");
     const token = `${auth_token_type} ${auth_token}`;
-    axios.get("https://tangly-backend-ef31b7dafed0.herokuapp.com/tangle/peers", {
+    axios.get("http://localhost:4444/tangle/peers", {
       headers: { Authorization: token },
     }).then((res) => {
       setTangle(res.data.result)
@@ -30,7 +30,7 @@ export default function ProductsView() {
       </Typography>
       <Stack mb={5} direction="row" alignItems="center" justifyContent="space-between">
         <JsonView src={JSON.parse(JSON.stringify(tangle))} collapsed={100}
-          
+
           collapseStringMode="word"
           collapseStringsAfterLength={10} theme="default" />
       </Stack>

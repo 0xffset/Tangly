@@ -24,7 +24,7 @@ class AsyncDatabaseSession:
     def init(self):
         self.engine = create_async_engine(DB_CONFIG_DEPLOY_AZURE, future=True, echo=True)
         self.session = sessionmaker(
-            self.engine, expire_on_commit=False, class_=AsyncSession
+            self.engine, expire_on_commit=False, class_=AsyncSession,
         )()
 
     async def create_all(self):

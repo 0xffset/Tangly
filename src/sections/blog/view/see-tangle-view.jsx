@@ -19,7 +19,7 @@ export default function SeeTangleView() {
     const auth_token = localStorage.getItem("auth_token");
     const auth_token_type = localStorage.getItem("auth_token_type");
     const token = `${auth_token_type} ${auth_token}`;
-    axios.get("https://tangly-backend-ef31b7dafed0.herokuapp.com/tangle/", {
+    axios.get("http://localhost:4444/tangle/", {
       headers: { Authorization: token },
     }).then((res) => {
       setTangle(res.data.result)

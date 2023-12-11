@@ -15,6 +15,11 @@ class UsersRepository(BaseRepository):
         return (await db.execute(query)).scalar_one_or_none()
 
     @staticmethod
+    async def find_by_id(id: str):
+        query = select(Users).where(Users.id == id)
+        return (await db.execute(query)).scalar_one_or_none()
+
+    @staticmethod
     async def update_password(email: str, password: str):
         query = (
             sql_update(Users)

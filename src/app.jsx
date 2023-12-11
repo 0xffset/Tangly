@@ -33,7 +33,7 @@ export default function App() {
         setLoginSubmitFlag(false);
         return;
       }
-      axios.get("https://tangly-backend-ef31b7dafed0.herokuapp.com/users/", {
+      axios.get("http://localhost:4444/users/", {
         headers: { Authorization: token },
       })
         .then((response) => {

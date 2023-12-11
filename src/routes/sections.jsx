@@ -3,10 +3,10 @@ import { Outlet, Navigate, useRoutes } from 'react-router-dom';
 
 import DecryptFilePage from 'src/pages/decry-file';
 import DashboardLayout from 'src/layouts/dashboard';
+import UpdateProfilePage from 'src/pages/update-profile';
 
 import PrivateRouter from 'src/sections/privateRouter/privateRouter';
 import PrivateRouterLoginRegister from 'src/sections/privateRouter/PrivateRouterLoginRegister';
-import UpdateProfilePage from 'src/pages/update-profile';
 
 export const IndexPage = lazy(() => import('src/pages/app'));
 export const SeeTanglePage = lazy(() => import('src/pages/seeTangle'));

@@ -33,7 +33,7 @@ export default function RegisterView() {
   const handleClick = async () => {
 
 
-    await axios.post('https://tangly-backend-ef31b7dafed0.herokuapp.com/auth/register', {
+    await axios.post('http://localhost:4444/auth/register', {
       email: formValues.email,
       first_name: formValues.first_name,
       last_name: formValues.last_name,
