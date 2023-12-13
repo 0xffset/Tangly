@@ -128,7 +128,7 @@ export default function UserPage() {
     const auth_token_type = localStorage.getItem("auth_token_type");
     const token = `${auth_token_type} ${auth_token}`;
 
-    axios.get("http://localhost:4444/users/all", {
+    axios.get("http://localhost:8080/users/all", {
       headers: { Authorization: token },
     })
       .then((res) => {
@@ -141,7 +141,7 @@ export default function UserPage() {
     const auth_token = localStorage.getItem("auth_token");
     const auth_token_type = localStorage.getItem("auth_token_type");
     const token = `${auth_token_type} ${auth_token}`;
-    const url = `http://localhost:4444/tangle/transaction/new?recipient=${transactionData.recipient}`;
+    const url = `http://localhost:8080/tangle/transaction/new?recipient=${transactionData.recipient}`;
     setLoading(true);
     const formData = new FormData();
     formData.append("recipient", transactionData.recipient);

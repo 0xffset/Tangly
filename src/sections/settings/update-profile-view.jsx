@@ -31,7 +31,7 @@ export default function UpdateProfileView() {
             "password": password,
             "repeat_password": repeatPassword
         }
-        axios.put("http://localhost:4444/users/update", updateUser, {
+        axios.put("http://localhost:8080/users/update", updateUser, {
             headers: { Authorization: token }
         })
             .then((res) => {
@@ -48,7 +48,7 @@ export default function UpdateProfileView() {
         const auth_token = localStorage.getItem("auth_token");
         const auth_token_type = localStorage.getItem("auth_token_type");
         const token = `${auth_token_type} ${auth_token}`;
-        axios.get("http://localhost:4444/users", {
+        axios.get("http://localhost:8080/users", {
             headers: { Authorization: token },
         })
             .then((res) => {
@@ -67,7 +67,7 @@ export default function UpdateProfileView() {
                 </Button>
             </Stack>
 
-            <Grid spacing={4}>
+            <Grid>
                 <Collapse in={alert.open}>
                     <Alert
                         severity={alert.type}

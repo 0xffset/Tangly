@@ -35,7 +35,7 @@ export default function DecryptFileView() {
     const [orderBy, setOrderBy] = useState('file_extension');
     const [open, setOpen] = useState(false);
     const [message, setMessage] = useState('');
-    const [type, setType] = useState('');
+    const [type, setType] = useState('info');
     const [fileDecrypted, setFileDecrypted] = useState('');
 
     const handleSort = (event, id) => {
@@ -132,7 +132,7 @@ export default function DecryptFileView() {
             const data = {
                 signature: selected[0]
             }
-            axios.post(`http://localhost:4444/tangle/transaction/decrypt?signature=${data.signature}`, data, {
+            axios.post(`http://localhost:8080/tangle/transaction/decrypt?signature=${data.signature}`, data, {
                 headers: { Authorization: token }
             })
                 .then((res) => {
@@ -156,7 +156,7 @@ export default function DecryptFileView() {
         const auth_token = localStorage.getItem("auth_token");
         const auth_token_type = localStorage.getItem("auth_token_type");
         const token = `${auth_token_type} ${auth_token}`;
-        axios.get('http://localhost:4444/tangle/transactions/peers', {
+        axios.get('http://localhost:8080/tangle/transactions/peers', {
             headers: { Authorization: token },
         })
             .then((res) => {

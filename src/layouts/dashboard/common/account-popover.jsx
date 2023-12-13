@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
+import { faker } from '@faker-js/faker';
 import { Link, } from 'react-router-dom';
 
 import { Box } from '@mui/material';
@@ -105,7 +106,7 @@ export default function AccountPopover({ image, username, email }) {
 
         {MENU_OPTIONS.map((option) => (
           <Link to={`${option.url}`} style={{ textDecoration: 'none', color: 'black' }} >
-            <MenuItem key={option.label} onClick={handleClose}>
+            <MenuItem key={faker.string.uuid()} onClick={handleClose}>
               {option.label}
             </MenuItem>
           </Link>

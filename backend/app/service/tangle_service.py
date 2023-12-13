@@ -68,7 +68,14 @@ class TangleService:
         """
         base64_str_tangle = redis_util.get_hash("tangle")
         nodes = get_all_nodes(base64_str_tangle)
-        file = next((item for item in nodes if item["index"] == index and item["data"]["recipient"] == id), None)
+        file = next(
+            (
+                item
+                for item in nodes
+                if item["index"] == index and item["data"]["recipient"] == id
+            ),
+            None,
+        )
         if file is None:
             return "Unable to fetch the file details or you do not have access."
         output = {
@@ -128,14 +135,63 @@ class TangleService:
             and item["data"]["signature"] == signature
             and item["data"]["recipient"] == id
         )
-        print(file)
         encrypted_path = file[0]["data"]["file"]
         encrypted_file_extension = file[0]["data"]["file_extension"]
-        path_file_decrypted = decrypt_file(encrypted_path, encrypted_file_extension)
+        encrypted_file_name = file[0]["data"]["file_name"]
+        path_file_decrypted = decrypt_file(
+            encrypted_path, encrypted_file_extension, encrypted_file_name
+        )
         return path_file_decrypted
 
     @staticmethod
-    async def get_all_transactions_user(id):
+    async def get_all_user_transactions(id):
+        """
+        Get all user's transcation by id
+        """
+        base64_str_tangle = redis_util.get_hash("tangle")
+        nodes = get_all_nodes(base64_str_tangle)
+        # placeholder
+        output_info = []
+        # We get all nodes by the id (sender)
+        sender_info = list(
+            item
+            for item in nodes
+            if item["data"] is not None
+            and (item["data"]["sender"] == id or item["data"]["recipient"] == id)
+        )
+        for item in sender_info:
+            if "data" in item and item["data"] is not None:
+                if item["data"]["sender"] == id:
+                    output_info.append(
+                        {
+                            "id": item["index"],
+                            "type": "sender",
+                            "timestamp": item["timestamp"],
+                            "recipient": item["data"]["recipient"],
+                            "signature": item["data"]["signature"],
+                            "content_type": item["data"]["content_type"],
+                            "file_name": item["data"]["file_name"],
+                            "extension": item["data"]["file_extension"],
+                        }
+                    )
+                elif item["data"]["recipient"] == id:
+                    output_info.append(
+                        {
+                            "id": item["index"],
+                            "type": "recipient",
+                            "timestamp": item["timestamp"],
+                            "sender": item["data"]["sender"],
+                            "signature": item["data"]["signature"],
+                            "content_type": item["data"]["content_type"],
+                            "file_name": item["data"]["file_name"],
+                            "extension": item["data"]["file_extension"],
+                        }
+                    )
+        output_info = sorted(output_info, key=lambda x: x["timestamp"], reverse=True)
+        return output_info
+
+    @staticmethod
+    async def get_five_most_recent_transactions_user(id):
         """
         Get the last five most-recent transaction by id.
         """

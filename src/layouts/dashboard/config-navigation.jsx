@@ -32,6 +32,11 @@ const navConfig = [
     path: '/peers',
     icon: icon('ic_lock'),
   },
+  {
+    title: 'See Transactions',
+    path: '/transactions',
+    icon: icon('ic_lock'),
+  },
 ];
 
 export default navConfig;

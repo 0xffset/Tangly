@@ -16,11 +16,10 @@ export const ProductsPage = lazy(() => import('src/pages/products'));
 export const HomePage = lazy(() => import('src/pages/home'))
 export const RegisterPage = lazy(() => import('src/pages/register'))
 export const Page404 = lazy(() => import('src/pages/page-not-found'));
-
+export const SeeAlllTransactionsPage = lazy(() => import('src/pages/seeAllTransactions'))
 // ----------------------------------------------------------------------
 
 export default function Router({ isAuthenticated, user, handleLoginSubmit }) {
-
   const routes = useRoutes([
     {
       element: (
@@ -40,7 +39,8 @@ export default function Router({ isAuthenticated, user, handleLoginSubmit }) {
         { path: 'peers', element: <PrivateRouter component={<ProductsPage />} isAuthenticated={isAuthenticated} /> },
         { path: 'tangle', element: <PrivateRouter component={<SeeTanglePage />} isAuthenticated={isAuthenticated} /> },
         { path: 'decrypt', element: <PrivateRouter component={<DecryptFilePage />} isAuthenticated={isAuthenticated} /> },
-        { path: 'profile', element: <UpdateProfilePage/> }
+        { path: 'profile', element: <UpdateProfilePage /> },
+        { path: 'transactions', element: <PrivateRouter component={<SeeAlllTransactionsPage />} isAuthenticated={isAuthenticated} /> }
       ],
     },
     {

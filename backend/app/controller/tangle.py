@@ -107,7 +107,7 @@ async def get_all_transactions_by_user_logged(
 ):
     try:
         token = JWTRepo.extract_token(credentials)
-        result = await TangleService.get_all_transactions_user(token["id"])
+        result = await TangleService.get_five_most_recent_transactions_user(token["id"])
         return ResponseSchema(detail="success", result=result)
     except ExpiredSignatureError:
         return ResponseSchema(
@@ -115,7 +115,29 @@ async def get_all_transactions_by_user_logged(
         )
     except:
         return ResponseSchema(
-            detail="error", result={"error": "Unable to the all transactions logged"}
+            detail="error", result={"error": "Unable to get all transactions logged"}
+        )
+
+
+@router.get(
+    "/transcation/user/all",
+    response_model=ResponseSchema,
+    response_model_exclude_none=True,
+)
+async def get_all_transactions(
+    credentials: HTTPAuthorizationCredentials = Security(JWTBearer()),
+):
+    try:
+        token = JWTRepo.extract_token(credentials)
+        result = await TangleService.get_all_user_transactions(token["id"])
+        return ResponseSchema(detail="success", result=result)
+    except ExpiredSignatureError:
+        return ResponseSchema(
+            detail="error", result={"error", "Token has been expired"}
+        )
+    except:
+        return ResponseSchema(
+            detail="error", result={"error": "Unable to get all transactions"}
         )
 
 
@@ -227,8 +249,10 @@ async def get_node_details(request_body: TangleGetNodeDetailsSchema):
     response_model=ResponseSchema,
     response_model_exclude_none=True,
 )
-async def get_file_detail(request_body: TangleGetNodeDetailsSchema,  
-                          credentials: HTTPAuthorizationCredentials = Security(JWTBearer())):
+async def get_file_detail(
+    request_body: TangleGetNodeDetailsSchema,
+    credentials: HTTPAuthorizationCredentials = Security(JWTBearer()),
+):
     try:
         token = JWTRepo.extract_token(credentials)
         result = await TangleService.get_file_detail(request_body.index, token["id"])

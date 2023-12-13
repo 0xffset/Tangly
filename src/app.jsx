@@ -23,6 +23,13 @@ export default function App() {
     // Set loginSubmitFlag to true when the login is submitted
     setLoginSubmitFlag(true);
   };
+
+  const runOnceBeforeRender = () => {
+    
+  }
+  const useBeforeInitialRender = (fn) => {
+    useState(fn);
+  }
   useEffect(() => {
     if (loginSubmitFlag) {
       const auth_token = localStorage.getItem("auth_token");
@@ -33,7 +40,7 @@ export default function App() {
         setLoginSubmitFlag(false);
         return;
       }
-      axios.get("http://localhost:4444/users/", {
+      axios.get("http://localhost:8080/users/", {
         headers: { Authorization: token },
       })
         .then((response) => {
@@ -53,7 +60,7 @@ export default function App() {
     }
   }, [isAuthenticated, loginSubmitFlag]);
 
-
+  useBeforeInitialRender(runOnceBeforeRender);
   return (
     <ThemeProvider>
       <Router isAuthenticated={isAuthenticated} user={user} handleLoginSubmit={handleLoginSubmit} />

@@ -55,7 +55,7 @@ export default function UserTableRow({
     const data = {
       index
     }
-    axios.post("http://localhost:4444/tangle/transactions/file/details", data, {
+    axios.post("http://localhost:8080/tangle/transactions/file/details", data, {
       headers: { Authorization: token }
     }).then((res) => {
 

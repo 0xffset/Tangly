@@ -1,9 +1,9 @@
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 import { useState, useCallback } from 'react';
 
 import { Box } from '@mui/material';
 import Card from '@mui/material/Card';
-import Link from '@mui/material/Link';
 import Alert from '@mui/material/Alert';
 import Stack from '@mui/material/Stack';
 import Collapse from '@mui/material/Collapse';
@@ -33,7 +33,7 @@ export default function RegisterView() {
   const handleClick = async () => {
 
 
-    await axios.post('http://localhost:4444/auth/register', {
+    await axios.post('http://localhost:8080/auth/register', {
       email: formValues.email,
       first_name: formValues.first_name,
       last_name: formValues.last_name,
@@ -289,8 +289,8 @@ export default function RegisterView() {
 
           <Typography variant="body2" sx={{ mt: 2, mb: 5 }}>
             Already has account?
-            <Link variant="subtitle2" sx={{ ml: 0.5 }}>
-              <a href='/login'>Log in</a>
+             <Link variant="subtitle2" sx={{ ml: 0.5 }} to="/login" style={{textDecoration: 'none'}}>
+               Log in
             </Link>
           </Typography>
           {renderForm}

@@ -34,13 +34,13 @@ export default function AppView() {
     const token = `${auth_token_type} ${auth_token}`;
 
 
-    axios.all([axios.get("http://localhost:4444/users/", {
+    axios.all([axios.get("http://localhost:8080/users/", {
       headers: { Authorization: token },
-    }), axios.get("http://localhost:4444/tangle/transaction/statistics", {
+    }), axios.get("http://localhost:8080/tangle/transaction/statistics", {
       headers: { Authorization: token }
-    }), axios.get("http://localhost:4444/tangle/transaction/user", {
+    }), axios.get("http://localhost:8080/tangle/transaction/user", {
       headers: { Authorization: token }
-    }), axios.get("http://localhost:4444/tangle/transactions/graph", {
+    }), axios.get("http://localhost:8080/tangle/transactions/graph", {
       headers: { Authorization: token }
     })]).then(axios.spread((res1, res2, res3, res4) => {
       setUser(res1.data.result)
@@ -105,8 +105,8 @@ export default function AppView() {
 
           <Grid xs={15} md={6} lg={10}>
             <AppWebsiteVisits
-              title="Graph's Transaction"
-              subheader="Transactions send/recieve per day"
+              title="Transaction Graph"
+              subheader="Graph of transactions received and/or sent"
               chart={{
                 labels: graphData.labels,
                 series: [
@@ -202,7 +202,7 @@ export default function AppView() {
                 id: faker.string.uuid(),
                 title: value.type === "sender" ? "Transaction Sended" : "Transaction Received",
                 description: value.type === "sender" ? `You send a transaction to ${value.recipient}` : `You received a transaction from ${value.sender}`,
-                image: value.type === "sender" ? "/assets/icons/sender-icon.png" : "/assets/icons/recipient-icon.png",
+                type: value.type,
                 postedAt: fTimestampToDate(value.timestamp),
               }))}
             />

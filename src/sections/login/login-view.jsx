@@ -1,10 +1,10 @@
 /* eslint-disable react/prop-types */
 import axios from 'axios';
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 import { Box } from '@mui/material';
 import Card from '@mui/material/Card';
-import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Alert from '@mui/material/Alert';
 import Collapse from '@mui/material/Collapse';
@@ -45,7 +45,7 @@ export default function LoginView({handleLoginSubmit}) {
     }));
   };
   const handleClick = async () => {
-    await axios.post('http://localhost:4444/auth/login', {
+    await axios.post('http://localhost:8080/auth/login', {
       email: formValues.email,
       password: formValues.password
     })
@@ -157,8 +157,8 @@ export default function LoginView({handleLoginSubmit}) {
 
           <Typography variant="body2" sx={{ mt: 2, mb: 5 }}>
             Do not have account?
-            <Link variant="subtitle2" sx={{ ml: 0.5 }}>
-              <a href='/register'>Register</a>
+            <Link variant="subtitle2" sx={{ ml: 0.5 }} to="/register" >
+             Register
             </Link>
           </Typography>
           {renderForm}

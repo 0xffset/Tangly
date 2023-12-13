@@ -2,9 +2,11 @@ import * as React from 'react';
 import PropTypes from 'prop-types';
 
 import Box from '@mui/material/Box';
-import { Button } from '@mui/material';
+import Chip from '@mui/material/Chip';
 import Modal from '@mui/material/Modal';
 import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
 
 const style = {
     position: 'absolute',
@@ -16,6 +18,7 @@ const style = {
     border: '2px solid #000',
     boxShadow: 24,
     p: 4,
+
 };
 
 
@@ -32,8 +35,8 @@ export default function ModalFileDetails({
     const handleClose = () => {
         openModal = false
     };
-    
-    const onModalClose =(event)=> {
+
+    const onModalClose = (event) => {
         onCloseModal(event);
     }
 
@@ -45,24 +48,26 @@ export default function ModalFileDetails({
             aria-describedby="modal-modal-description"
         >
             <Box sx={style}>
-           <Button onClick={e=>onModalClose(e)}>Close</Button>
+                <IconButton style={{ 'float': 'right' }} onClick={e => onModalClose(e)} aria-label="close" size="large">
+                    <CloseIcon />
+                </IconButton>
                 <Typography id="modal-modal-title" variant="h6" component="h2">
                     File details
                 </Typography>
                 <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                    Sender: {sender}
+                    Sender: <Chip label={sender} />
                 </Typography>
                 <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                    Extension: {extension}
+                    Extension: <Chip label={extension} />
                 </Typography>
                 <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                    Content Type: {content_type}
+                    Content Type: <Chip label={content_type}/>
                 </Typography>
                 <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                    Signature: {signature}
+                    Signature: <Chip label={signature}/>
                 </Typography>
                 <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                    Upload at: {upload_time}
+                    Upload at: <Chip label={upload_time}/>
                 </Typography>
             </Box>
         </Modal>

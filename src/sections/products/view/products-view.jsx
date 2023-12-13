@@ -16,7 +16,7 @@ export default function ProductsView() {
     const auth_token = localStorage.getItem("auth_token");
     const auth_token_type = localStorage.getItem("auth_token_type");
     const token = `${auth_token_type} ${auth_token}`;
-    axios.get("http://localhost:4444/tangle/peers", {
+    axios.get("http://localhost:8080/tangle/peers", {
       headers: { Authorization: token },
     }).then((res) => {
       setTangle(res.data.result)

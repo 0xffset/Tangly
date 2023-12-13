@@ -65,7 +65,7 @@ def generate_presigned_url(bucket_name, s3_file_name, expiration=3600):
     return presigned_url
 
 
-def decrypt_file(input_file, file_extension):
+def decrypt_file(input_file, file_extension, file_name):
     cipher = Fernet(KEY)
 
     # Download the file
@@ -77,7 +77,7 @@ def decrypt_file(input_file, file_extension):
     # Create an in-memory file-like object for decrypted data
     decrypted_file_obj = BytesIO(decrypted_data)
 
-    decrypted_filename = f"decrypted_{secrets.token_hex(8)}{file_extension}"
+    decrypted_filename = f"{file_name}"
     try:
         # Upload the decrypted data directly to S3
         s3.upload_fileobj(decrypted_file_obj, S3_BUCKET, decrypted_filename)
