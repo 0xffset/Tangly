@@ -1,7 +1,8 @@
 /* eslint-disable react/prop-types */
-import axios from 'axios';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { useDispatch, useSelector } from 'react-redux';
 
 import { Box } from '@mui/material';
 import Card from '@mui/material/Card';
@@ -18,18 +19,21 @@ import InputAdornment from '@mui/material/InputAdornment';
 
 import { useRouter } from 'src/routes/hooks';
 
+import { login } from 'src/actions/auth';
 import { bgGradient } from 'src/theme/css';
 
 import Logo from 'src/components/logo';
 import Iconify from 'src/components/iconify';
+// eslint-disable-next-line no-undef
 
 // ----------------------------------------------------------------------
 
-export default function LoginView({handleLoginSubmit}) {
+export default function LoginView({ handleLoginSubmit }) {
   const theme = useTheme();
+  const { message } = useSelector(state => state.message);
 
   const router = useRouter();
-
+  const dispatch = useDispatch();
   const [showPassword, setShowPassword] = useState(false);
   const [openAlert, setOpenAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
@@ -45,22 +49,33 @@ export default function LoginView({handleLoginSubmit}) {
     }));
   };
   const handleClick = async () => {
-    await axios.post('http://localhost:8080/auth/login', {
-      email: formValues.email,
-      password: formValues.password
-    })
+    dispatch(login(formValues.email, formValues.password))
       .then((res) => {
-        if (res.status === 200) {
-          localStorage.setItem("auth_token", res.data.result.access_token);
-          localStorage.setItem("auth_token_type", res.data.result.token_type);
-          handleLoginSubmit();
-          router.push('/');
+        handleLoginSubmit();
+        router.push('/');
+      })
+      .catch((err) => {
+        if (message) {
+          setAlertMessage(message)
+          setOpenAlert(true);
         }
       })
-      .catch((res) => {
-        setAlertMessage(res.response.data.detail)
-        setOpenAlert(true);
-      })
+    // await axios.post('http://localhost:8080/auth/login', {
+    //   email: formValues.email,
+    //   password: formValues.password
+    // })
+    //   .then((res) => {
+    //     if (res.status === 200) {
+    //       localStorage.setItem("auth_token", res.data.result.access_token);
+    //       localStorage.setItem("auth_token_type", res.data.result.token_type);
+    //       handleLoginSubmit();
+    //       router.push('/');
+    //     }
+    //   })
+    //   .catch((res) => {
+    //     setAlertMessage(res.response.data.detail)
+    //     setOpenAlert(true);
+    //   })
   };
 
   const renderForm = (
@@ -89,7 +104,7 @@ export default function LoginView({handleLoginSubmit}) {
 
       <Stack direction="row" alignItems="center" justifyContent="flex-end" sx={{ my: 3 }}>
         <Link variant="subtitle2" underline="hover">
-         Forgot your password?
+          Forgot your password?
         </Link>
       </Stack>
       <Box sx={{ width: '100%' }}>
@@ -158,7 +173,7 @@ export default function LoginView({handleLoginSubmit}) {
           <Typography variant="body2" sx={{ mt: 2, mb: 5 }}>
             Do not have account?
             <Link variant="subtitle2" sx={{ ml: 0.5 }} to="/register" >
-             Register
+              Register
             </Link>
           </Typography>
           {renderForm}

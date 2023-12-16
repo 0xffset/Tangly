@@ -1,6 +1,6 @@
-import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { useState, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { Box } from '@mui/material';
 import Card from '@mui/material/Card';
@@ -16,6 +16,7 @@ import { alpha, useTheme } from '@mui/material/styles';
 import InputAdornment from '@mui/material/InputAdornment';
 
 import { bgGradient } from 'src/theme/css';
+import { register } from 'src/actions/auth';
 
 import Logo from 'src/components/logo';
 import Iconify from 'src/components/iconify';
@@ -25,36 +26,47 @@ import Iconify from 'src/components/iconify';
 export default function RegisterView() {
   const theme = useTheme();
 
+  const { message } = useSelector(state => state.message);
 
+  const dispatch = useDispatch();
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordRepeated, setShowPasswordRepeated] = useState(false);
   const initialValidationState = [true, ''];
 
   const handleClick = async () => {
 
-
-    await axios.post('http://localhost:8080/auth/register', {
-      email: formValues.email,
-      first_name: formValues.first_name,
-      last_name: formValues.last_name,
-      password: formValues.password
-    })
+    dispatch(register(formValues.first_name, formValues.last_name, formValues.email, formValues.password))
       .then((res) => {
-        if (res.status === 200) {
-          window.location = "/login";
-        }
+        window.location = "/login"
       })
       .catch((res) => {
-        setAlertMessage(res.response.data.detail)
-        setOpenAlert(true);
+        if (message) {
+          setAlertMessage(message)
+          setOpenAlert(true);
+        }
       })
+    // await axios.post('http://localhost:8080/auth/register', {
+    //   email: formValues.email,
+    //   first_name: formValues.first_name,
+    //   last_name: formValues.last_name,
+    //   password: formValues.password
+    // })
+    //   .then((res) => {
+    //     if (res.status === 200) {
+    //       window.location = "/login";
+    //     }
+    //   })
+    //   .catch((res) => {
+    //     setAlertMessage(res.response.data.detail)
+    //     setOpenAlert(true);
+    //   })
 
   };
   const [isValidFirstName, setIsValidFirstName] = useState(initialValidationState);
   const [isValidRepeatPassword, setValidRepeatPassword] = useState(initialValidationState);
   const [isValidEmail, setIsValidEmail] = useState(initialValidationState);
 
-  const [message, setMessage] = useState("");
+  const [msgAlertPassword, setMsgAlertPassword] = useState("");
   const [openAlert, setOpenAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
 
@@ -70,14 +82,14 @@ export default function RegisterView() {
 
   const handleRepeatPassword = useCallback((passwordValue) => {
     const isValid = passwordValue.trim().length > 0 && passwordValue.trim() === formValues.password.trim();
-    setValidRepeatPassword([isValid, isValid ? 'Contraseñas coinciden.' : 'Contraseñas no coinciden.']);
+    setValidRepeatPassword([isValid, isValid ? 'Passwords match.' : 'Passwords does not match.']);
     //  setFormValues((prev) => ({ ...prev, repeatPassword: passwordValue }));
   }, [formValues.password]);
 
 
   const updateRepeatStatusPassword = useCallback((passwordValue) => {
     const isValid = passwordValue.trim().length > 0 && formValues.repeat_password.trim() === passwordValue.trim();
-    setValidRepeatPassword([isValid, isValid ? 'Contraseñas coinciden.' : 'Contraseñas no coinciden.']);
+    setValidRepeatPassword([isValid, isValid ? 'Passwords match.' : 'Passwords does not match.']);
   }, [formValues.repeat_password]);
 
   const handlePassword = useCallback((passwordValue) => {
@@ -108,7 +120,7 @@ export default function RegisterView() {
       strength = 'Weak';
     }
 
-    setMessage(strength);
+    setMsgAlertPassword(strength);
 
     // Actualizar estado de la repetida
     updateRepeatStatusPassword(passwordValue);
@@ -143,6 +155,7 @@ export default function RegisterView() {
       setIsValidEmail(initialValidationState);
     }
     if (isValidEmail[0] && isValidFirstName[0] && isValidRepeatPassword[0]) {
+
       await handleClick();
     }
   };
@@ -165,11 +178,12 @@ export default function RegisterView() {
     <>
       <Stack spacing={3}>
         <TextField
-          onChange={handleInputChange}
+
           required
           name="first_name"
           label="First Name"
           value={formValues.first_name}
+          onChange={handleInputChange}
           helperText={isValidFirstName[1]}
           error={!isValidFirstName[0]}
         />
@@ -189,8 +203,8 @@ export default function RegisterView() {
           onChange={handleInputChange}
           label="Password"
           type={showPassword ? 'text' : 'password'}
-          helperText={message}
-          color={getActiveColor(message)}
+          helperText={msgAlertPassword}
+          color={getActiveColor(msgAlertPassword)}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
@@ -289,8 +303,8 @@ export default function RegisterView() {
 
           <Typography variant="body2" sx={{ mt: 2, mb: 5 }}>
             Already has account?
-             <Link variant="subtitle2" sx={{ ml: 0.5 }} to="/login" style={{textDecoration: 'none'}}>
-               Log in
+            <Link variant="subtitle2" sx={{ ml: 0.5 }} to="/login" style={{ textDecoration: 'none' }}>
+              Log in
             </Link>
           </Typography>
           {renderForm}

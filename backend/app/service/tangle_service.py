@@ -271,11 +271,12 @@ class TangleService:
                     transacations_sended_per_day[formatted_date] = 1
         recieved = []
         sended = []
-        print(transacations_received_per_day)
-        print("------")
-        print(transacations_sended_per_day)
-
         labels = list(labels)
+
+        formatted_date = [datetime.strptime(date, "%d %b %Y") for date in labels]
+        sorted_dates = sorted(formatted_date)
+        labels = [date.strftime("%d %b %Y") for date in sorted_dates]
+
         for i in range(len(labels)):
             if transacations_received_per_day.get(labels[i]) == None:
                 recieved.append(0)

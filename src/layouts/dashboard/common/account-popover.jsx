@@ -1,7 +1,10 @@
-import { useState } from 'react';
+/* eslint-disable perfectionist/sort-named-imports */
 import PropTypes from 'prop-types';
 import { faker } from '@faker-js/faker';
 import { Link, } from 'react-router-dom';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { useDispatch } from 'react-redux';
+import { useCallback, useState } from 'react';
 
 import { Box } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
@@ -14,6 +17,7 @@ import IconButton from '@mui/material/IconButton';
 
 import { useRouter } from 'src/routes/hooks';
 
+import { logout } from 'src/actions/auth';
 import { account } from 'src/_mock/account';
 // ----------------------------------------------------------------------
 
@@ -36,6 +40,10 @@ const MENU_OPTIONS = [
 // ----------------------------------------------------------------------
 
 export default function AccountPopover({ image, username, email }) {
+
+  const dispatch = useDispatch();
+
+
   const [open, setOpen] = useState(null);
   const router = useRouter();
   const handleOpen = (event) => {
@@ -46,11 +54,11 @@ export default function AccountPopover({ image, username, email }) {
     setOpen(null);
   };
 
-  const LogOut = () => {
-    localStorage.removeItem("auth_token");
-    localStorage.removeItem("auth_token_type");
+  const LogOut = useCallback(() => {
+    dispatch(logout());
     router.push("/home")
-  }
+  }, [dispatch, router]);
+
   return (
     <>
       <IconButton

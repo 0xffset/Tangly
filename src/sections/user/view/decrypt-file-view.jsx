@@ -136,13 +136,13 @@ export default function DecryptFileView() {
                 headers: { Authorization: token }
             })
                 .then((res) => {
-                    console.log(res)
+
                     if (res.data.result.error) {
                         setMessage(res.data.detail === "error")
                         setOpen(true);
                         setType("error")
                     } else if (res.data.detail === "success") {
-                        console.log(res.data.result)
+
                         setFileDecrypted(res.data.result)
                         setMessage("Your file was decrpyted successfully!")
                         setOpen(true);

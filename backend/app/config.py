@@ -10,7 +10,6 @@ DB_CONFIG_DEPLOY_AZURE = f"postgresql+asyncpg://tangly:OvBOUB1jZ%Ixr^dU@tangly-d
 
 SECRET_KEY = "hHQE8&R<+lbQ:y}"
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXIPIRE_MINUTES = 10080
 
 
 class AsyncDatabaseSession:

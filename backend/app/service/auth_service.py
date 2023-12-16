@@ -15,7 +15,7 @@ from app.repository.auth_repository import JWTRepo
 
 # Encrypt password
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
+ACCESS_TOKEN_EXIPIRE_MINUTES = 1440 # One day
 
 class AuthService:
     @staticmethod
@@ -59,7 +59,7 @@ class AuthService:
                     raise HTTPException(status_code=400, detail="Invalid password")
                 return JWTRepo(
                     data={"email": _user.email, "id": _user.id}
-                ).generate_token()
+                ).generate_token(ACCESS_TOKEN_EXIPIRE_MINUTES)
             raise HTTPException(status_code=404, detail="User not found")
         except ExpiredSignatureError:
             raise HTTPException(status_code=403, detail="Token has been expired")

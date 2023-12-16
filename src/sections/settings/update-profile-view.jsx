@@ -1,5 +1,9 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import axios from "axios";
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { useSelector } from "react-redux";
 import { useState, useEffect } from "react";
+import { Navigate } from "react-router-dom";
 
 import Alert from '@mui/material/Alert';
 import Collapse from '@mui/material/Collapse';
@@ -9,6 +13,13 @@ import CloseIcon from '@mui/icons-material/Close';
 import { Card, Grid, Button, TextField, Typography } from "@mui/material";
 
 export default function UpdateProfileView() {
+
+
+    const { user: currentUser } = useSelector((state) => state.auth);
+
+    if (!currentUser) {
+        return <Navigate to='/login' />
+    }
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
@@ -19,6 +30,8 @@ export default function UpdateProfileView() {
         message: "",
         type: ''
     })
+
+
 
     const handleUpdateProfile = () => {
         const auth_token = localStorage.getItem("auth_token");
@@ -36,7 +49,7 @@ export default function UpdateProfileView() {
         })
             .then((res) => {
                 setAlert({ open: true, message: "Profile updated successfully.", type: "success" })
-                console.log(res)
+
             })
             .catch((err) => {
                 setAlert({ open: true, message: err.response.data.detail, type: "error" })
@@ -44,6 +57,7 @@ export default function UpdateProfileView() {
             })
 
     }
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     useEffect(() => {
         const auth_token = localStorage.getItem("auth_token");
         const auth_token_type = localStorage.getItem("auth_token_type");
