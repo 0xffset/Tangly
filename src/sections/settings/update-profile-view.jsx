@@ -1,9 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import axios from "axios";
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { useSelector } from "react-redux";
 import { useState, useEffect } from "react";
-import { Navigate } from "react-router-dom";
 
 import Alert from '@mui/material/Alert';
 import Collapse from '@mui/material/Collapse';
@@ -13,13 +11,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { Card, Grid, Button, TextField, Typography } from "@mui/material";
 
 export default function UpdateProfileView() {
-
-
-    const { user: currentUser } = useSelector((state) => state.auth);
-
-    if (!currentUser) {
-        return <Navigate to='/login' />
-    }
+   
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
@@ -30,6 +22,7 @@ export default function UpdateProfileView() {
         message: "",
         type: ''
     })
+    const API_URL = import.meta.env.VITE_ENVIRONMENT === "development" ? import.meta.env.VITE_SERVER_DEVELOPMENT : import.meta.env.VITE_SERVER_PRODUCTION
 
 
 
@@ -44,7 +37,7 @@ export default function UpdateProfileView() {
             "password": password,
             "repeat_password": repeatPassword
         }
-        axios.put("http://localhost:8080/users/update", updateUser, {
+        axios.put(`${API_URL}users/update`, updateUser, {
             headers: { Authorization: token }
         })
             .then((res) => {
@@ -62,7 +55,7 @@ export default function UpdateProfileView() {
         const auth_token = localStorage.getItem("auth_token");
         const auth_token_type = localStorage.getItem("auth_token_type");
         const token = `${auth_token_type} ${auth_token}`;
-        axios.get("http://localhost:8080/users", {
+        axios.get(`${API_URL}users`, {
             headers: { Authorization: token },
         })
             .then((res) => {
@@ -70,7 +63,7 @@ export default function UpdateProfileView() {
                 setLastName(res.data.result.last_name);
                 setEmail(res.data.result.email);
             })
-    }, [])
+    }, [API_URL])
 
     return (
         <Container maxWidth="xl">

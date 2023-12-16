@@ -35,12 +35,14 @@ export default function App() {
       const auth_token = localStorage.getItem("auth_token");
       const auth_token_type = localStorage.getItem("auth_token_type");
       const token = `${auth_token_type} ${auth_token}`;
+      const API_URL = import.meta.env.VITE_ENVIRONMENT === "development" ? import.meta.env.VITE_SERVER_DEVELOPMENT : import.meta.env.VITE_SERVER_PRODUCTION
+
       if (!token) {
         setIsAuthenticated(false);
         setLoginSubmitFlag(false);
         return;
       }
-      axios.get("http://localhost:8080/users/", {
+      axios.get(`${API_URL}users/`, {
         headers: { Authorization: token },
       })
         .then((response) => {

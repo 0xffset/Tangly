@@ -53,6 +53,7 @@ export default function UserPage() {
     'recipient': '',
     'file': ''
   });
+  const API_URL = import.meta.env.VITE_ENVIRONMENT === "development" ? import.meta.env.VITE_SERVER_DEVELOPMENT : import.meta.env.VITE_SERVER_PRODUCTION
 
   const handleSort = (event, id) => {
     const isAsc = orderBy === id && order === 'asc';
@@ -122,26 +123,27 @@ export default function UserPage() {
   });
 
   const notFound = !dataFiltered.length && !!filterName;
-
+  
   useEffect(() => {
     const auth_token = localStorage.getItem("auth_token");
     const auth_token_type = localStorage.getItem("auth_token_type");
     const token = `${auth_token_type} ${auth_token}`;
 
-    axios.get("http://localhost:8080/users/all", {
+    axios.get(`${API_URL}users/all`, {
       headers: { Authorization: token },
     })
       .then((res) => {
         setUserData(res.data.result);
       })
-  }, [])
+  }, [API_URL])
 
 
   const handleClickSendTransaction = () => {
     const auth_token = localStorage.getItem("auth_token");
     const auth_token_type = localStorage.getItem("auth_token_type");
     const token = `${auth_token_type} ${auth_token}`;
-    const url = `http://localhost:8080/tangle/transaction/new?recipient=${transactionData.recipient}`;
+
+    const url = `${API_URL}tangle/transaction/new?recipient=${transactionData.recipient}`;
     setLoading(true);
     const formData = new FormData();
     formData.append("recipient", transactionData.recipient);

@@ -27,6 +27,7 @@ export default function AppView() {
   const [lastsTransactions, setLastsTransactions] = useState([]);
   const [graphData, setGraphData] = useState([])
   const [isLoading, setIsLoading] = useState(true);
+  const API_URL = import.meta.env.VITE_ENVIRONMENT === "development" ? import.meta.env.VITE_SERVER_DEVELOPMENT : import.meta.env.VITE_SERVER_PRODUCTION
 
   useEffect(() => {
     const auth_token = localStorage.getItem("auth_token");
@@ -34,13 +35,13 @@ export default function AppView() {
     const token = `${auth_token_type} ${auth_token}`;
 
 
-    axios.all([axios.get("http://localhost:8080/users/", {
+    axios.all([axios.get(`${API_URL}users/`, {
       headers: { Authorization: token },
-    }), axios.get("http://localhost:8080/tangle/transaction/statistics", {
+    }), axios.get(`${API_URL}tangle/transaction/statistics`, {
       headers: { Authorization: token }
-    }), axios.get("http://localhost:8080/tangle/transaction/user", {
+    }), axios.get(`${API_URL}tangle/transaction/user`, {
       headers: { Authorization: token }
-    }), axios.get("http://localhost:8080/tangle/transactions/graph", {
+    }), axios.get(`${API_URL}tangle/transactions/graph`, {
       headers: { Authorization: token }
     })]).then(axios.spread((res1, res2, res3, res4) => {
       setUser(res1.data.result)
@@ -50,7 +51,7 @@ export default function AppView() {
       console.log(res4.data.result)
       setIsLoading(false);
     }))
-  }, []);
+  }, [API_URL]);
 
 
   return (

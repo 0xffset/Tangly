@@ -45,12 +45,14 @@ const columns = [
 
 export default function SeeAllTransactionsView() {
     const [transcations, setTransactions] = React.useState([])
+    const API_URL = import.meta.env.VITE_ENVIRONMENT === "development" ? import.meta.env.VITE_SERVER_DEVELOPMENT : import.meta.env.VITE_SERVER_PRODUCTION
+
     React.useEffect(() => {
         const auth_token = localStorage.getItem("auth_token");
         const auth_token_type = localStorage.getItem("auth_token_type");
         const token = `${auth_token_type} ${auth_token}`;
 
-        axios.get("http://localhost:8080/tangle/transcation/user/all", {
+        axios.get(`${API_URL}tangle/transcation/user/all`, {
             headers: { Authorization: token }
         }).then((res) => {
             const values = []
@@ -72,7 +74,7 @@ export default function SeeAllTransactionsView() {
             .catch((err) => {
                 console.error(err)
             })
-    }, [])
+    }, [API_URL])
     return (
         <div style={{ height: 400, width: '100%' }}>
             <DataGrid

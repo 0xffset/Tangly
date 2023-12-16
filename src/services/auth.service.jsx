@@ -1,10 +1,9 @@
 import axios from "axios"
 
-const API_URL = "http://localhost:8080/auth/"
 
+const API_URL = import.meta.env.VITE_ENVIRONMENT === "development" ? import.meta.env.VITE_SERVER_DEVELOPMENT : import.meta.env.VITE_SERVER_PRODUCTION
 
-
-const register = (first_name, last_name, email, password) => axios.post(`${API_URL}register`, {
+const register = (first_name, last_name, email, password) => axios.post(`${API_URL}auth/register`, {
     first_name,
     last_name,
     email,
@@ -13,7 +12,7 @@ const register = (first_name, last_name, email, password) => axios.post(`${API_U
 })
     .then((res) => res.data.result)
 
-const login = (email, password) => axios.post(`${API_URL}login`, {
+const login = (email, password) => axios.post(`${API_URL}auth/login`, {
     email,
     password
 })

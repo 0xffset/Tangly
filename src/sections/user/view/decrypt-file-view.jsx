@@ -37,6 +37,7 @@ export default function DecryptFileView() {
     const [message, setMessage] = useState('');
     const [type, setType] = useState('info');
     const [fileDecrypted, setFileDecrypted] = useState('');
+    const API_URL = import.meta.env.VITE_ENVIRONMENT === "development" ? import.meta.env.VITE_SERVER_DEVELOPMENT : import.meta.env.VITE_SERVER_PRODUCTION
 
     const handleSort = (event, id) => {
         const isAsc = orderBy === id && order === 'asc';
@@ -132,7 +133,7 @@ export default function DecryptFileView() {
             const data = {
                 signature: selected[0]
             }
-            axios.post(`http://localhost:8080/tangle/transaction/decrypt?signature=${data.signature}`, data, {
+            axios.post(`${API_URL}tangle/transaction/decrypt?signature=${data.signature}`, data, {
                 headers: { Authorization: token }
             })
                 .then((res) => {
@@ -156,14 +157,14 @@ export default function DecryptFileView() {
         const auth_token = localStorage.getItem("auth_token");
         const auth_token_type = localStorage.getItem("auth_token_type");
         const token = `${auth_token_type} ${auth_token}`;
-        axios.get('http://localhost:8080/tangle/transactions/peers', {
+        axios.get(`${API_URL}tangle/transactions/peers`, {
             headers: { Authorization: token },
         })
             .then((res) => {
                 setFilesData(res.data.result)
             })
 
-    }, [])
+    }, [API_URL])
     return (
         <Container>
             <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>

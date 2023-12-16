@@ -39,7 +39,7 @@ export default function Router({ isAuthenticated, user, handleLoginSubmit }) {
         { path: 'peers', element: <PrivateRouter component={<ProductsPage />} isAuthenticated={isAuthenticated} /> },
         { path: 'tangle', element: <PrivateRouter component={<SeeTanglePage />} isAuthenticated={isAuthenticated} /> },
         { path: 'decrypt', element: <PrivateRouter component={<DecryptFilePage />} isAuthenticated={isAuthenticated} /> },
-        { path: 'profile', element: <UpdateProfilePage /> },
+        { path: 'profile', element: <PrivateRouter component={<UpdateProfilePage />} isAuthenticated={isAuthenticated} />  },
         { path: 'transactions', element: <PrivateRouter component={<SeeAlllTransactionsPage />} isAuthenticated={isAuthenticated} /> }
       ],
     },

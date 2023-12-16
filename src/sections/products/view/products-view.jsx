@@ -12,17 +12,19 @@ import Typography from '@mui/material/Typography';
 
 export default function ProductsView() {
   const [tangle, setTangle] = useState([]);
+  const API_URL = import.meta.env.VITE_ENVIRONMENT === "development" ? import.meta.env.VITE_SERVER_DEVELOPMENT : import.meta.env.VITE_SERVER_PRODUCTION
+
   useEffect(() => {
     const auth_token = localStorage.getItem("auth_token");
     const auth_token_type = localStorage.getItem("auth_token_type");
     const token = `${auth_token_type} ${auth_token}`;
-    axios.get("http://localhost:8080/tangle/peers", {
+    axios.get(`${API_URL}tangle/peers`, {
       headers: { Authorization: token },
     }).then((res) => {
       setTangle(res.data.result)
     })
 
-  }, [])
+  }, [API_URL])
   return (
     <Container>
       <Typography variant="h4" sx={{ mb: 5 }}>

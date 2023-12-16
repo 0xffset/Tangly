@@ -52,10 +52,12 @@ export default function UserTableRow({
     const auth_token = localStorage.getItem("auth_token");
     const auth_token_type = localStorage.getItem("auth_token_type");
     const token = `${auth_token_type} ${auth_token}`;
+    const API_URL = import.meta.env.VITE_ENVIRONMENT === "development" ? import.meta.env.VITE_SERVER_DEVELOPMENT : import.meta.env.VITE_SERVER_PRODUCTION
+
     const data = {
       index
     }
-    axios.post("http://localhost:8080/tangle/transactions/file/details", data, {
+    axios.post(`${API_URL}tangle/transactions/file/details`, data, {
       headers: { Authorization: token }
     }).then((res) => {
 
