@@ -10,7 +10,7 @@ import Checkbox from '@mui/material/Checkbox';
 import MenuItem from '@mui/material/MenuItem';
 import TableCell from '@mui/material/TableCell';
 import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
+// import IconButton from '@mui/material/IconButton';
 
 import { fTimestampToDate } from 'src/utils/format-time';
 
@@ -44,9 +44,9 @@ export default function UserTableRow({
     'upload_at': ''
 
   });
-  const handleOpenMenu = (event) => {
-    setOpen(event.currentTarget);
-  };
+  // const handleOpenMenu = (event) => {
+  //   setOpen(event.currentTarget);
+  // };
 
   const handleSeeFileDetails = () => {
     const auth_token = localStorage.getItem("auth_token");
@@ -108,11 +108,11 @@ export default function UserTableRow({
         <TableCell>{email}</TableCell>
 
 
-        <TableCell align="right">
+        {/* <TableCell align="right">
           <IconButton onClick={handleOpenMenu}>
             <Iconify icon="eva:more-vertical-fill" />
           </IconButton>
-        </TableCell>
+        </TableCell> */}
       </TableRow>
 
       <Popover
