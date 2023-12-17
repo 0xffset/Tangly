@@ -10,7 +10,7 @@ import Checkbox from '@mui/material/Checkbox';
 import MenuItem from '@mui/material/MenuItem';
 import TableCell from '@mui/material/TableCell';
 import Typography from '@mui/material/Typography';
-// import IconButton from '@mui/material/IconButton';
+import IconButton from '@mui/material/IconButton';
 
 import { fTimestampToDate } from 'src/utils/format-time';
 
@@ -32,7 +32,8 @@ export default function UserTableRow({
   last_name,
   email,
   image,
-  index
+  index,
+  type
 }) {
   const [open, setOpen] = useState(null);
   const [openModal, setOpenModal] = useState(false);
@@ -44,9 +45,9 @@ export default function UserTableRow({
     'upload_at': ''
 
   });
-  // const handleOpenMenu = (event) => {
-  //   setOpen(event.currentTarget);
-  // };
+  const handleOpenMenu = (event) => {
+    setOpen(event.currentTarget);
+  };
 
   const handleSeeFileDetails = () => {
     const auth_token = localStorage.getItem("auth_token");
@@ -108,28 +109,36 @@ export default function UserTableRow({
         <TableCell>{email}</TableCell>
 
 
-        {/* <TableCell align="right">
-          <IconButton onClick={handleOpenMenu}>
-            <Iconify icon="eva:more-vertical-fill" />
-          </IconButton>
-        </TableCell> */}
+        {type !== "users" ? (
+          <TableCell align="right">
+            <IconButton onClick={handleOpenMenu}>
+              <Iconify icon="eva:more-vertical-fill" />
+            </IconButton>
+          </TableCell>
+
+          // eslint-disable-next-line react/jsx-no-useless-fragment
+        ) : (<></>)}
       </TableRow>
 
-      <Popover
-        open={!!open}
-        anchorEl={open}
-        onClose={handleCloseMenu}
-        anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-        PaperProps={{
-          sx: { width: 140 },
-        }}
-      >
-        <MenuItem onClick={handleSeeFileDetails}>
-          <Iconify icon="eva:edit-fill" sx={{ mr: 2 }} />
-          Details
-        </MenuItem>
-      </Popover>
+      {type !== "users" ? (
+        <Popover
+          open={!!open}
+          anchorEl={open}
+          onClose={handleCloseMenu}
+          anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
+          transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+          PaperProps={{
+            sx: { width: 140 },
+          }}
+        >
+          <MenuItem onClick={handleSeeFileDetails}>
+            <Iconify icon="eva:edit-fill" sx={{ mr: 2 }} />
+            Details
+          </MenuItem>
+        </Popover>
+
+        // eslint-disable-next-line react/jsx-no-useless-fragment
+      ) : (<></>)}
     </>
   );
 }
@@ -147,5 +156,6 @@ UserTableRow.propTypes = {
   role: PropTypes.any,
   selected: PropTypes.any,
   status: PropTypes.string,
-  index: PropTypes.any
+  index: PropTypes.any,
+  type: PropTypes.string
 };

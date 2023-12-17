@@ -211,6 +211,7 @@ export default function DecryptFileView() {
                                             index={row.index}
                                             selected={selected.indexOf(row.signature) !== -1}
                                             handleClick={(event) => handleClick(event, row.signature)}
+                                            type='decrypt'
                                         />
                                     ))}
                                 <TableEmptyRows

@@ -243,6 +243,7 @@ export default function UserPage() {
                     avatarUrl={row.image}
                     selected={selected.indexOf(row.id) !== -1}
                     handleClick={(event) => handleClick(event, row.id)}
+                    type='users'
                   />
                 ))}
 
