@@ -26,30 +26,25 @@
 
 ```mermaid
 graph TD;
-
 subgraph Front-end
   A(Front-end)
   A --> B[Reactjs v18]
   A --> C[MUI Material]
 end
-
 subgraph Back-end
   E(Back-end)
   E --> F[Python v11]
   E --> G[FastAPI]
   E --> H[Swagger]
 end
-
 subgraph Database
   I(Database)
   I --> J[PostgresSQL]
   I --> K[Redis]
   I --> L[Amazon AWS]
 end
-
 A --> E
 E --> I
-
 ```
  
  <a id="item-two"></a>
