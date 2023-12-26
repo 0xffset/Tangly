@@ -1,13 +1,13 @@
 from redis import Redis
 from redis.exceptions import ConnectionError
-from os import getenv
+import os
 
 
 try:
     redis_client = Redis(
-        host="helpful-quetzal-46883.upstash.io",
-        port=46883,
-        password="a46c6ef3aacf49f2ad9dfca529393480",
+        host=os.environ.get("REDIS_HOST"),
+        port=os.environ.get("REDIS_PORT"),
+        password=os.environ.get("REDIS_PASSWORD"),
         ssl=True,
     )
 

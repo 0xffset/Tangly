@@ -6,16 +6,16 @@ import boto3
 from urllib.parse import urlparse
 from io import BytesIO
 
+
 KEY = b"Ke0Ft_85-bXQ8GLOOsEI6JeT2mD-GeI8pkcP_re8wio="
 S3_BUCKET = "tangly-bucket"
 
 # Set up AWS credentials and create an S3 client
 session = boto3.session.Session(region_name="us-east-2")
-
 s3 = session.client(
     "s3",
-    aws_access_key_id="AKIARE7WOK7XQV2KZBED",
-    aws_secret_access_key="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",
+    aws_access_key_id=os.environ.get("AWS_ACCESS_KEY_ID"),
+    aws_secret_access_key=os.environ.get("AWS_SECRET_ACCESS_KEY"),
     config=boto3.session.Config(signature_version="s3v4"),
 )
 # Verify is exist the store folder, otherwise, create it

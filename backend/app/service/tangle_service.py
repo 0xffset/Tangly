@@ -28,24 +28,20 @@ class TangleService:
         """'
         Get the entire tangle network
         """
-        # base64_str_tangle = redis_util.get_hash("tangle")
-        # tangle = base64_to_dict(base64_str_tangle)
+
         return self.tangle
 
     async def get_nodes(self):
         """
         Get the nodes of the tangle network
         """
-        # base64_str_tangle = redis_util.get_hash("tangle")
-        # nodes = get_all_nodes(base64_str_tangle)
+
         return self.nodes
 
     async def get_peers(self):
         """
         Get the peers of the tangle network
         """
-        # base64_str_tangle = redis_util.get_hash("tangle")
-        # peers = get_all_peers(base64_str_tangle)
 
         return self.peers
 
@@ -53,16 +49,14 @@ class TangleService:
         """
         Get the details of a node by index
         """
-        # base64_str_tangle = redis_util.get_hash("tangle")
-        # nodes = get_all_nodes(base64_str_tangle)
+
         return next((item for item in self.nodes if item.get("index") == index), None)
 
     async def get_file_detail(self, index, id):
         """
         Get the deatils of a file by index
         """
-        # base64_str_tangle = redis_util.get_hash("tangle")
-        # nodes = get_all_nodes(base64_str_tangle)
+
         file = next(
             (
                 item
@@ -86,8 +80,7 @@ class TangleService:
         """
         Get all transactions by sender
         """
-        # base64_str_tangle = redis_util.get_hash("tangle")
-        # nodes = get_all_nodes(base64_str_tangle)
+
         return list(
             item
             for item in self.nodes
@@ -95,8 +88,6 @@ class TangleService:
         )
 
     async def get_all_files_by_id(self, id):
-        # base64_str_tangle = redis_util.get_hash("tangle")
-        # nodes = get_all_nodes(base64_str_tangle)
         data = list(
             item
             for item in self.nodes
@@ -118,8 +109,7 @@ class TangleService:
         """
         Decrypte a file by signature and the user id
         """
-        # base64_str_tangle = redis_util.get_hash("tangle")
-        # nodes = get_all_nodes(base64_str_tangle)
+
         file = list(
             item
             for item in self.nodes
@@ -139,8 +129,7 @@ class TangleService:
         """
         Get all user's transcation by id
         """
-        # base64_str_tangle = redis_util.get_hash("tangle")
-        # nodes = get_all_nodes(base64_str_tangle)
+
         # placeholder
         output_info = []
         # We get all nodes by the id (sender)
@@ -222,8 +211,7 @@ class TangleService:
         """
         Get the data needed to plot the graph
         """
-        # base64_str_tangle = redis_util.get_hash("tangle")
-        # nodes = get_all_nodes(base64_str_tangle)
+
         info_output = {
             "labels": [],
             "transactions_sended_per_day": [],
@@ -284,8 +272,6 @@ class TangleService:
         return info_output
 
     async def get_user_statistics(self, id):
-        # base64_str_tangle = redis_util.get_hash("tangle")
-        # nodes = get_all_nodes(base64_str_tangle)
         statistics = {
             "total_sended_transactions": 0,
             "total_received_transactions": 0,
@@ -336,8 +322,6 @@ class TangleService:
         return result
 
     def send_transaction(self, data):
-        # base64_str_tangle = redis_util.get_hash("tangle")
-        # nodes = get_all_nodes(base64_str_tangle)
         nodes_to_attch = []
         nodes_indexes = []
         new_index = len(self.nodes)
@@ -368,15 +352,11 @@ class TangleService:
 
         # Add new node to tangle
         new_node = TangleService.create_node(self, data, nodes_indexes, new_index)
-        print(nodes_to_attch)
         self.nodes.insert(new_index, new_node)
         TangleService.update_tangle(self.nodes)
         return new_index
 
     async def resolve_conflicts(self):
-        # base64_str_tangle = redis_util.get_hash("tangle")
-        # neighbours = get_all_peers(base64_str_tangle)
-        # nodes = get_all_nodes(base64_str_tangle)
         new_tangle = None
 
         max_length = len(self.nodes)
@@ -408,8 +388,6 @@ class TangleService:
         return True
 
     def validate_node(self, node):
-        # base64_str_tangle = redis_util.get_hash("tangle")
-        # nodes = get_all_nodes(base64_str_tangle)
         if self.nodes[node["index"]]["validity"] < REQUIRED_PROOF:
             last_proof = self.nodes[node["index"]]["proof"]  # This nodes proof
             last_hash = ""
@@ -436,8 +414,6 @@ class TangleService:
         return proof
 
     def create_node(self, data, prev_nodes, new_index, validity=0):
-        # base64_string = redis_util.get_hash("tangle")
-        # nodes = get_all_nodes(base64_string)
         prev_hashes = []
         """
 		Se podría agregar una futura actualización para

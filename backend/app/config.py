@@ -1,15 +1,18 @@
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 from sqlmodel import SQLModel
+import os
+from dotenv import load_dotenv
 
-DB_CONFIG_DEV = f"postgresql+asyncpg://postgres:3301:postgres@localhost:5433/tangly"
-DB_CONFIG_DEPLOY = f"postgresql+asyncpg://csacrdydphgnpr:f28fe4c8a0029d8ddca59cb922176a3d5c7610a1325f5b4776180586b9e11e52@ec2-44-213-228-107.compute-1.amazonaws.com:5432/ddn84o9rkbqlha"
-DB_CONFIG_DEPLOY_AZURE = f"postgresql+asyncpg://tangly:OvBOUB1jZ%Ixr^dU@tangly-db.postgres.database.azure.com:5432/postgres"
+load_dotenv()
+
+DB_CONFIG_DEV = os.getenv("DB_CONFIG_DEV")
+DB_CONFIG_DEPLOY = os.getenv("DB_CONFIG_DEPLOY")
+DB_CONFIG_DEPLOY_AZURE = os.getenv("DB_CONFIG_DEPLOY_AZURE")
 
 
-
-SECRET_KEY = "hHQE8&R<+lbQ:y}"
-ALGORITHM = "HS256"
+SECRET_KEY = os.getenv("SECRET_KEY")
+ALGORITHM = os.getenv("ALGORITHM")
 
 
 class AsyncDatabaseSession:
@@ -21,9 +24,13 @@ class AsyncDatabaseSession:
         return getattr(self.session, name)
 
     def init(self):
-        self.engine = create_async_engine(DB_CONFIG_DEPLOY_AZURE, future=True, echo=True)
+        self.engine = create_async_engine(
+            DB_CONFIG_DEPLOY_AZURE, future=True, echo=True
+        )
         self.session = sessionmaker(
-            self.engine, expire_on_commit=False, class_=AsyncSession,
+            self.engine,
+            expire_on_commit=False,
+            class_=AsyncSession,
         )()
 
     async def create_all(self):

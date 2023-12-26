@@ -1,6 +1,12 @@
 from fastapi import APIRouter, Depends, Security, UploadFile
 
-from app.schema import ResponseSchema, RegisterSchema, UpdateProfileSchema, LoginSchema, ForgotPasswordSchema
+from app.schema import (
+    ResponseSchema,
+    RegisterSchema,
+    UpdateProfileSchema,
+    LoginSchema,
+    ForgotPasswordSchema,
+)
 from app.repository.auth_repository import JWTBearer, JWTRepo
 from fastapi.security import HTTPAuthorizationCredentials
 from app.service.users_service import UserService
@@ -17,9 +23,7 @@ async def get_user_profile(
     return ResponseSchema(detail="success", result=result)
 
 
-@router.get(
-    "/all", response_model=ResponseSchema, response_model_exclude_none=True
-)
+@router.get("/all", response_model=ResponseSchema, response_model_exclude_none=True)
 async def get_all_users(
     credentials: HTTPAuthorizationCredentials = Security(JWTBearer()),
 ):
@@ -27,10 +31,11 @@ async def get_all_users(
     result = await UserService.get_all_users(token["id"])
     return ResponseSchema(detail="success", result=result)
 
+
 @router.put("/update", response_model=ResponseSchema, response_model_exclude_none=True)
 async def update_user_profile(
     request_body: UpdateProfileSchema,
-    credentials: HTTPAuthorizationCredentials = Security(JWTBearer())
+    credentials: HTTPAuthorizationCredentials = Security(JWTBearer()),
 ):
     token = JWTRepo.extract_token(credentials)
     await UserService.update_profile_users(token["id"], request_body)

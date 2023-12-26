@@ -21,7 +21,6 @@ async def get_tangle():
     try:
         tangle = TangleService()
         result = await tangle.get_tangle()
-        # result = await TangleService.get_tangle()
         return ResponseSchema(detail="success", result=result)
     except ExpiredSignatureError:
         return ResponseSchema(
@@ -38,7 +37,6 @@ async def get_nodes():
     try:
         tangle = TangleService()
         result = await tangle.get_nodes()
-        # result = await TangleService.get_nodes()
         return ResponseSchema(detail="success", result=result)
     except ExpiredSignatureError:
         return ResponseSchema(
@@ -53,7 +51,6 @@ async def get_peers():
     try:
         tangle = TangleService()
         result = await tangle.get_peers()
-        # result = await TangleService.get_peers()
         return ResponseSchema(detail="success", result=result)
     except ExpiredSignatureError:
         return ResponseSchema(
@@ -72,7 +69,6 @@ async def get_all_transactions_by_peer(
     try:
         tangle = TangleService()
         result = await tangle.get_all_transactions_by_sender(request_body.sender)
-        # result = await TangleService.get_all_transactions_by_sender(request_body.sender)
         return ResponseSchema(detail="success", result=result)
     except ExpiredSignatureError:
         return ResponseSchema(
@@ -96,7 +92,6 @@ async def get_all_transactions_by_id(
         token = JWTRepo.extract_token(crendentials)
         tangle = TangleService()
         result = await tangle.get_all_files_by_id(token["id"])
-        # result = await TangleService.get_all_files_by_id(token["id"])
         return ResponseSchema(detail="success", result=result)
     except ExpiredSignatureError:
         return ResponseSchema(
@@ -141,7 +136,6 @@ async def get_all_transactions(
         token = JWTRepo.extract_token(credentials)
         tangle = TangleService()
         result = await tangle.get_all_user_transactions(token["id"])
-        # result = await TangleService.get_all_user_transactions(token["id"])
         return ResponseSchema(detail="success", result=result)
     except ExpiredSignatureError:
         return ResponseSchema(
@@ -166,7 +160,6 @@ async def new_transaction(
         tangle = TangleService()
         tangle.resolve_conflicts()
         result = await tangle.make_new_transaction(token["id"], recipient, file)
-        # result = await TangleService.make_new_transaction(token["id"], recipient, file)
         return ResponseSchema(detail="success", result={"success": result})
     except ExpiredSignatureError:
         return ResponseSchema(
@@ -190,7 +183,6 @@ async def decrypt_file_by_signature(
         token = JWTRepo.extract_token(creds)
         tangle = TangleService()
         result = await tangle.decrypt_file_by_signature(signature, token["id"])
-        # result = await TangleService.decrypt_file_by_signature(signature, token["id"])
         return ResponseSchema(detail="success", result=result)
     except ExpiredSignatureError:
         return ResponseSchema(
@@ -214,7 +206,6 @@ async def get_graph(
         token = JWTRepo.extract_token(credentials)
         tangle = TangleService()
         result = await tangle.get_graphs(token["id"])
-        # result = await TangleService.get_graphs(token["id"])
         return ResponseSchema(detail="success", result=result)
     except ExpiredSignatureError:
         return ResponseSchema(
@@ -236,7 +227,6 @@ async def get_statistics_by_user(
         token = JWTRepo.extract_token(credentials)
         tangle = TangleService()
         result = await tangle.get_user_statistics(token["id"])
-        # result = await TangleService.get_user_statistics(token["id"])
         return ResponseSchema(detail="success", result=result)
     except ExpiredSignatureError:
         return ResponseSchema(
@@ -255,7 +245,6 @@ async def get_node_details(request_body: TangleGetNodeDetailsSchema):
     try:
         tangle = TangleService()
         result = await tangle.get_node_detail(request_body.index)
-        # result = await TangleService.get_node_detail(request_body.index)
         return ResponseSchema(detail="success", result=result)
     except ExpiredSignatureError:
         return ResponseSchema(
@@ -280,7 +269,6 @@ async def get_file_detail(
         token = JWTRepo.extract_token(credentials)
         tangle = TangleService()
         result = await tangle.get_file_detail(request_body.index, token["id"])
-        # result = await TangleService.get_file_detail(request_body.index, token["id"])
         return ResponseSchema(detail="success", result=result)
     except ExpiredSignatureError:
         return ResponseSchema(
