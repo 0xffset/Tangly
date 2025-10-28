@@ -55,7 +55,7 @@
     "simplebar-react": "^3.2.4",
     "stringify": "^5.2.0",
     "timeago-react": "^3.0.6",
-    "validator": "^13.11.0",
+    "validator": "^13.15.20",
     "vanta": "^0.5.24"
   },
   "devDependencies": {
